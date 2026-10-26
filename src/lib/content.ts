@@ -81,11 +81,11 @@ export const FAQ = [
   },
   {
     q: "What do I need to provide?",
-    a: "Your logo, any photos you’d like to use, and a sense of what you want each page to say. Don’t have copy? Add professional copywriting and we’ll write it for you.",
+    a: "Your logo, any photos you’d like to use, and the text for your pages. You upload them while placing your order, and you can’t check out without them. Don’t have copy? Add professional copywriting and we’ll write it for you.",
   },
   {
     q: "How does payment work?",
-    a: "Every project is paid in full at checkout through Stripe. All payments are final. The only exception: if you don’t send the content we request within 5 days, we cancel your order and refund you in full, and you can place a new order when you’re ready.",
+    a: "Every project is paid in full at checkout through Stripe. All payments are final and non-refundable, so please review your package and add-ons before you pay.",
   },
   {
     q: "Do I own my website?",
@@ -109,7 +109,6 @@ export const FAQ = [
 export const PAYMENT_AGREEMENT_POINTS = [
   "Your order is paid in full today. We don’t offer deposits or payment plans.",
   "All payments are final and non-refundable once your order is placed.",
-  "Content deadline: if you don’t send the content we request within 5 days, your order is cancelled and fully refunded. You’d then place a new order to start again.",
   "Your payment reserves your place in our schedule, and work begins straight away.",
   "Changes beyond your package and add-ons are quoted and paid for separately.",
 ];

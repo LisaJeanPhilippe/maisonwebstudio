@@ -53,7 +53,10 @@ export const uploadedFileSchema = z.object({
 });
 
 export const assetsStepSchema = z.object({
-  files: z.array(uploadedFileSchema).max(15),
+  files: z
+    .array(uploadedFileSchema)
+    .min(1, "Upload your content to continue, such as your logo, photos or text.")
+    .max(15),
   assetNotes: z.string().trim().max(1000).optional().default(""),
 });
 

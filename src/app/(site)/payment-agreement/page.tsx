@@ -10,7 +10,7 @@ const SECTIONS = [
   ],
   [
     "All payments are final",
-    "All payments are final and non-refundable, with one exception: the content deadline below. Once your order is placed, we reserve time in our schedule for your project and begin work, so we can’t refund payments, in whole or in part, if you change your mind or cancel.",
+    "All payments are final and non-refundable. Once your order is placed, we reserve time in our schedule for your project and begin work, so we can’t refund payments, in whole or in part, if you change your mind or cancel.",
   ],
   [
     "Before you pay",
@@ -21,8 +21,8 @@ const SECTIONS = [
     "Your payment covers the package, pages, add-ons and revision rounds you selected. Additional pages, features or revision rounds are quoted separately and must be paid in full before that work begins.",
   ],
   [
-    "Content deadline",
-    "When we request your content (such as your logo, photos or text), you have 5 days from the date of our request to send it. If we don’t receive it within 5 days, we’ll cancel your order and refund your payment in full to your original payment method. To continue, you’ll need to place a new order for your website.",
+    "Your content",
+    "You upload your content (such as your logo, photos and text) as part of placing your order. An order can’t be placed without it.",
   ],
   [
     "Payment processing",
@@ -30,7 +30,7 @@ const SECTIONS = [
   ],
   [
     "Agreement",
-    "By checking the payment agreement box at checkout and completing payment, you confirm that you’ve read and accept this agreement, including that all payments are final except under the content deadline. We keep a record of the date you accepted it.",
+    "By checking the payment agreement box at checkout and completing payment, you confirm that you’ve read and accept this agreement, including that all payments are final. We keep a record of the date you accepted it.",
   ],
 ];
 
@@ -40,7 +40,7 @@ export default function PaymentAgreementPage() {
       <p className="eyebrow mb-8">Legal</p>
       <h1 className="text-headline font-medium">Payment agreement</h1>
       <p className="mt-6 max-w-2xl text-lede text-muted">
-        Every project is paid in full at checkout. All payments are final, except for a full refund if you don’t send your content within 5 days of our request.
+        Every project is paid in full at checkout, and all payments are final and non-refundable.
       </p>
       <p className="mt-3 text-[13px] text-subtle">Version {PAYMENT_AGREEMENT_VERSION}</p>
       <dl className="mt-16 max-w-3xl border-t border-line">

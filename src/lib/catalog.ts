@@ -295,7 +295,7 @@ export function computeTotals(packageId: PackageId, addOns: SelectedAddOns) {
 }
 
 /** Bump when the payment agreement text changes; stored with every order. */
-export const PAYMENT_AGREEMENT_VERSION = "2026-10-26.2";
+export const PAYMENT_AGREEMENT_VERSION = "2026-10-26.3";
 
 export function estimatedTimeline(packageId: PackageId, rush: boolean): string {
   const pkg = getPackage(packageId);

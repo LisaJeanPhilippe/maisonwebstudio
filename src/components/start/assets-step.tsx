@@ -94,7 +94,7 @@ export function AssetsStep({
       <StepHeader
         step="Step 5 of 6"
         title="Share your brand assets."
-        description="Logo, photos, existing copy, menus or brochures — anything that helps us capture your business. You can also send files later."
+        description="Upload your logo, photos, text, menus or brochures. This step is required: you need to upload at least one file to continue."
       />
 
       <div
