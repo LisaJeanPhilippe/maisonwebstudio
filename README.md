@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Masion Web Studio
 
-## Getting Started
+Marketing site and online ordering flow for Masion Web Studio, built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Motion and Stripe Checkout.
 
-First, run the development server:
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local   # add your Stripe test keys
+npm install
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+For local webhooks, run `stripe listen --forward-to localhost:3000/api/webhooks/stripe` and copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Scripts: `npm run dev`, `npm run build`, `npm start`, `npm run lint`, `npx tsc --noEmit`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Structure
 
-## Learn More
+| Path | Purpose |
+| --- | --- |
+| `src/app/(site)/` | Marketing pages: home, work, work/[slug], services, pricing, process, about, terms, start (configurator), checkout/success |
+| `src/app/demo/[slug]` | Full-screen, interactive versions of the sample client sites |
+| `src/app/api/checkout` | Validates the order, recomputes pricing on the server, saves the order and creates a Stripe Checkout Session |
+| `src/app/api/uploads` | Accepts asset uploads (15 MB max each, allow-listed file types) |
+| `src/app/api/webhooks/stripe` | Verifies signatures and marks orders paid; sends confirmation emails |
+| `src/lib/catalog.ts` | Packages, add-ons, comparison matrix and pricing logic (one source of truth) |
+| `src/lib/order-schema.ts` | Zod schemas shared by the client steps and the API |
+| `src/lib/projects.ts` | Portfolio content |
+| `src/components/demos/` | The five sample client websites (container-query responsive, so they render as desktop or mobile inside device frames) |
+| `src/components/start/` | The 6-step configurator |
+| `src/app/globals.css` | Design tokens: color, type, radius, shadow, motion, buttons, cards, inputs |
 
-To learn more about Next.js, take a look at the following resources:
+## Ordering flow
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Package → Configure (style, pages) → Add-ons → Project details → Asset upload → Review & pay (in full or a 50% deposit) → Stripe Checkout → `/checkout/success`, which verifies the session with Stripe and shows the confirmation. Progress is saved in `localStorage`, so a refresh or a cancelled payment doesn't lose anything.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Pages beyond the package's allowance are billed automatically as "Additional pages". Add-ons already included in a package are hidden.
 
-## Deploy on Vercel
+## Production notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Storage:** orders and uploads are written to `DATA_DIR` (default `.data/`) as files. On serverless hosts (for example Vercel) the filesystem doesn't persist, so either point `DATA_DIR` at a mounted volume or replace `src/lib/server/storage.ts` with a database and object storage such as S3, R2 or Vercel Blob.
+- **Email:** set `RESEND_API_KEY` to send customer confirmations, and `STUDIO_NOTIFICATION_EMAIL` to get new-order alerts. Without a key, emails are logged to the console.
+- **Content:** the portfolio projects are sample or concept work and are labeled that way. Review the FAQ and terms copy before launch.
