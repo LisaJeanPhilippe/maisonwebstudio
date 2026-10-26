@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "Masion Web Studio — Beautiful websites built for businesses ready to grow",
+    default: "Masion Web Studio",
     template: "%s — Masion Web Studio",
   },
   description:

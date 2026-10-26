@@ -19,6 +19,11 @@ function formatBytes(bytes: number) {
 }
 
 function uploadFile(file: File, onProgress: (p: number) => void): Promise<UploadedFile> {
+  // Static preview builds have no server: keep the file in the browser only.
+  if (process.env.NEXT_PUBLIC_STATIC_PREVIEW === "1") {
+    onProgress(1);
+    return Promise.resolve({ id: crypto.randomUUID(), name: file.name, size: file.size, type: file.type });
+  }
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     const form = new FormData();

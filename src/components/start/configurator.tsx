@@ -153,6 +153,13 @@ export default function Configurator() {
       return;
     }
 
+    if (process.env.NEXT_PUBLIC_STATIC_PREVIEW === "1") {
+      setServerError(
+        "This is a preview link, so payments are turned off. On the live site this button opens secure Stripe Checkout.",
+      );
+      return;
+    }
+
     setSubmitting(true);
     setServerError(null);
     try {
