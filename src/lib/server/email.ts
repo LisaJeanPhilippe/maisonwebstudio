@@ -38,7 +38,7 @@ ${lines}
 
 Paid in full: ${formatPrice(stored.total)}
 
-As agreed at checkout, all payments are final and non-refundable.
+Please send the content we request within 5 days. If we don’t receive it in time, we’ll cancel your order and refund you in full, and you’d need to place a new order. Otherwise, as agreed at checkout, all payments are final.
 
 What happens next
 1. Within one business day we'll email you to schedule a 30-minute kickoff call.

@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Order confirmed", robots: { index: f
 
 const NEXT_STEPS = [
   ["Kickoff email", "Within one business day we’ll email you to schedule a 30-minute kickoff call."],
-  ["Project board", "You’ll get a shared board with your timeline and anything we still need from you."],
+  ["Content request", "We’ll ask for your logo, photos and text. Please send them within 5 days, or your order will be cancelled and fully refunded."],
   ["First design", "Your homepage design arrives in your inbox — usually within a week."],
 ];
 
@@ -114,7 +114,7 @@ async function Confirmation({ searchParams }: { searchParams: Promise<Record<str
                 <span className="text-muted">Paid in full</span>
                 <span className="text-[1.25rem] font-medium">{formatPrice(stored.total)}</span>
               </div>
-              <p className="text-[13px] text-muted">All payments are final and non-refundable.</p>
+              <p className="text-[13px] text-muted">All payments are final. If you don’t send the content we request within 5 days, your order is cancelled and fully refunded.</p>
             </div>
             <div className="mt-6 border-t border-line pt-6 text-[14px]">
               <p className="text-muted">Pages</p>

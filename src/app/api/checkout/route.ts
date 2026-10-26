@@ -67,7 +67,7 @@ export async function POST(request: Request) {
         paymentAgreement: `accepted ${PAYMENT_AGREEMENT_VERSION} (all payments final)`,
       },
       custom_text: {
-        submit: { message: "All payments are final and non-refundable, as agreed in the Masion Web Studio payment agreement." },
+        submit: { message: "All payments are final, except for a full refund if you don’t send requested content within 5 days, as set out in the Masion Web Studio payment agreement." },
       },
       payment_intent_data: {
         description: `${pkg.name} for ${order.businessName}`,

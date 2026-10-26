@@ -85,7 +85,7 @@ export const FAQ = [
   },
   {
     q: "How does payment work?",
-    a: "Every project is paid in full at checkout through Stripe. All payments are final and non-refundable, so please review your package and add-ons before you pay.",
+    a: "Every project is paid in full at checkout through Stripe. All payments are final. The only exception: if you don’t send the content we request within 5 days, we cancel your order and refund you in full, and you can place a new order when you’re ready.",
   },
   {
     q: "Do I own my website?",
@@ -109,6 +109,7 @@ export const FAQ = [
 export const PAYMENT_AGREEMENT_POINTS = [
   "Your order is paid in full today. We don’t offer deposits or payment plans.",
   "All payments are final and non-refundable once your order is placed.",
+  "Content deadline: if you don’t send the content we request within 5 days, your order is cancelled and fully refunded. You’d then place a new order to start again.",
   "Your payment reserves your place in our schedule, and work begins straight away.",
   "Changes beyond your package and add-ons are quoted and paid for separately.",
 ];

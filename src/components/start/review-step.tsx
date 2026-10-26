@@ -128,7 +128,9 @@ export function ReviewStep({
           />
           <span className="text-ink-soft">
             I agree to pay {formatPrice(totals.total)} in full today and understand that{" "}
-            <strong className="font-medium text-ink">all payments are final and non-refundable</strong>.
+            <strong className="font-medium text-ink">all payments are final</strong>. The only exception: if I
+            don’t send my content within 5 days of the request, my order will be cancelled and fully
+            refunded, and I’ll need to place a new order.
           </span>
         </label>
         {errors.acceptPaymentAgreement && <p className="field-error">{errors.acceptPaymentAgreement}</p>}
