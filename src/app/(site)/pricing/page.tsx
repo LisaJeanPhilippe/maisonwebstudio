@@ -20,8 +20,8 @@ export default function PricingPage() {
           <p className="eyebrow mb-8">Pricing</p>
           <h1 className="max-w-[13ch] text-display font-medium text-balance">Premium design, honest pricing.</h1>
           <p className="mt-8 max-w-xl text-lede text-muted">
-            Three packages, one-time pricing. Pay in full or start with a 50% deposit — the balance is
-            due when your site is ready to launch.
+            Three packages, one-time pricing. Every project is paid in full at checkout, and all
+            payments are final.
           </p>
         </Reveal>
       </section>

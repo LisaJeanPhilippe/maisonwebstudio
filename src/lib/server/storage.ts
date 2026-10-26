@@ -16,7 +16,7 @@ const DATA_DIR = process.env.DATA_DIR
 const ORDERS_DIR = path.join(DATA_DIR, "orders");
 const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
 
-export type OrderStatus = "pending_payment" | "paid" | "deposit_paid" | "cancelled";
+export type OrderStatus = "pending_payment" | "paid" | "cancelled";
 
 export type StoredOrder = {
   id: string;
@@ -25,9 +25,9 @@ export type StoredOrder = {
   status: OrderStatus;
   order: Order;
   items: LineItem[];
-  subtotal: number;
-  dueToday: number;
-  balance: number;
+  total: number;
+  /** Record of the customer accepting the final-payment agreement. */
+  paymentAgreement: { version: string; acceptedAt: string; ip: string | null };
   stripeSessionId?: string;
   stripePaymentIntentId?: string;
   confirmationSentAt?: string;

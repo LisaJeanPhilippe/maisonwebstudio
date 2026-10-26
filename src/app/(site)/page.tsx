@@ -98,7 +98,7 @@ export default function HomePage() {
         <SectionHeading
           eyebrow="Pricing"
           title="Simple packages. Clear outcomes."
-          description="One-time pricing with everything you need to launch. Pay in full or start with a 50% deposit."
+          description="One-time pricing with everything you need to launch, paid in full at checkout."
           action={<ButtonLink href="/pricing#compare" variant="secondary" arrow>Compare packages</ButtonLink>}
         />
         <div className="mt-14 md:mt-20">

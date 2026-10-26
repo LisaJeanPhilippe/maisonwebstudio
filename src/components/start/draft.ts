@@ -30,8 +30,8 @@ export type Draft = {
   launchDate: string;
   files: UploadedFile[];
   assetNotes: string;
-  paymentPlan: "full" | "deposit";
   acceptTerms: boolean;
+  acceptPaymentAgreement: boolean;
 };
 
 export const EMPTY_DRAFT: Draft = {
@@ -53,8 +53,8 @@ export const EMPTY_DRAFT: Draft = {
   launchDate: "",
   files: [],
   assetNotes: "",
-  paymentPlan: "full",
   acceptTerms: false,
+  acceptPaymentAgreement: false,
 };
 
 export const STEPS = [

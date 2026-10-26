@@ -111,19 +111,10 @@ async function Confirmation({ searchParams }: { searchParams: Promise<Record<str
             </ul>
             <div className="mt-6 space-y-2 border-t border-line pt-6 text-[14px]">
               <div className="flex justify-between">
-                <span className="text-muted">Total</span>
-                <span className="text-[1.25rem] font-medium">{formatPrice(stored.subtotal)}</span>
+                <span className="text-muted">Paid in full</span>
+                <span className="text-[1.25rem] font-medium">{formatPrice(stored.total)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted">Paid today</span>
-                <span>{formatPrice(stored.dueToday)}</span>
-              </div>
-              {stored.balance > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-muted">Due at launch</span>
-                  <span>{formatPrice(stored.balance)}</span>
-                </div>
-              )}
+              <p className="text-[13px] text-muted">All payments are final and non-refundable.</p>
             </div>
             <div className="mt-6 border-t border-line pt-6 text-[14px]">
               <p className="text-muted">Pages</p>

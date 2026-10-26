@@ -18,7 +18,7 @@ export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): 
     const paymentIntent =
       typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
     const updated = await updateOrder(order.id, {
-      status: order.balance > 0 ? "deposit_paid" : "paid",
+      status: "paid",
       stripeSessionId: session.id,
       stripePaymentIntentId: paymentIntent,
     });

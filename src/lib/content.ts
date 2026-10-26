@@ -84,8 +84,8 @@ export const FAQ = [
     a: "Your logo, any photos you’d like to use, and a sense of what you want each page to say. Don’t have copy? Add professional copywriting and we’ll write it for you.",
   },
   {
-    q: "Can I pay a deposit instead of the full amount?",
-    a: "Yes. At checkout you can pay in full or pay a 50% deposit today, with the balance due when your site is ready to launch.",
+    q: "How does payment work?",
+    a: "Every project is paid in full at checkout through Stripe. All payments are final and non-refundable, so please review your package and add-ons before you pay.",
   },
   {
     q: "Do I own my website?",
@@ -103,4 +103,12 @@ export const FAQ = [
     q: "What happens if I’m not happy with the design?",
     a: "Every package includes revision rounds, and we share designs early so feedback shapes the work. You’ll see your homepage design before we build anything else.",
   },
+];
+
+/** Key points shown at checkout; the full text lives on /payment-agreement. */
+export const PAYMENT_AGREEMENT_POINTS = [
+  "Your order is paid in full today. We don’t offer deposits or payment plans.",
+  "All payments are final and non-refundable once your order is placed.",
+  "Your payment reserves your place in our schedule, and work begins straight away.",
+  "Changes beyond your package and add-ons are quoted and paid for separately.",
 ];

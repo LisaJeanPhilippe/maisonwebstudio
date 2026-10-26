@@ -247,8 +247,6 @@ export const INDUSTRIES = [
   "Other",
 ] as const;
 
-export const DEPOSIT_RATE = 0.5;
-
 export type SelectedAddOns = Partial<Record<AddOnId, number>>;
 
 export type LineItem = { id: string; name: string; unitPrice: number; quantity: number; total: number };
@@ -289,12 +287,15 @@ export function buildLineItems(packageId: PackageId, addOns: SelectedAddOns): Li
   return items;
 }
 
-export function computeTotals(packageId: PackageId, addOns: SelectedAddOns, plan: "full" | "deposit") {
+/** Every order is paid in full at checkout. */
+export function computeTotals(packageId: PackageId, addOns: SelectedAddOns) {
   const items = buildLineItems(packageId, addOns);
-  const subtotal = items.reduce((sum, i) => sum + i.total, 0);
-  const dueToday = plan === "deposit" ? Math.round(subtotal * DEPOSIT_RATE) : subtotal;
-  return { items, subtotal, dueToday, balance: subtotal - dueToday };
+  const total = items.reduce((sum, i) => sum + i.total, 0);
+  return { items, total };
 }
+
+/** Bump when the payment agreement text changes; stored with every order. */
+export const PAYMENT_AGREEMENT_VERSION = "2026-10-26";
 
 export function estimatedTimeline(packageId: PackageId, rush: boolean): string {
   const pkg = getPackage(packageId);

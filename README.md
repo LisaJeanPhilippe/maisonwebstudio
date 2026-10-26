@@ -32,7 +32,7 @@ Scripts: `npm run dev`, `npm run build`, `npm start`, `npm run lint`, `npx tsc -
 
 ## Ordering flow
 
-Package → Configure (style, pages) → Add-ons → Project details → Asset upload → Review & pay (in full or a 50% deposit) → Stripe Checkout → `/checkout/success`, which verifies the session with Stripe and shows the confirmation. Progress is saved in `localStorage`, so a refresh or a cancelled payment doesn't lose anything.
+Package → Configure (style, pages) → Add-ons → Project details → Asset upload → Review & pay (always in full; the customer must accept the payment agreement, which says all payments are final) → Stripe Checkout → `/checkout/success`, which verifies the session with Stripe and shows the confirmation. Progress is saved in `localStorage`, so a refresh or a cancelled payment doesn't lose anything.
 
 Pages beyond the package's allowance are billed automatically as "Additional pages". Add-ons already included in a package are hidden.
 

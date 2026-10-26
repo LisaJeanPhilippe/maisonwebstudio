@@ -19,6 +19,8 @@ const COLUMNS = [
       { href: "/pricing#compare", label: "Compare packages" },
       { href: "/start", label: "Configure your website" },
       { href: "/pricing#faq", label: "FAQ" },
+      { href: "/terms", label: "Project terms" },
+      { href: "/payment-agreement", label: "Payment agreement" },
     ],
   },
 ];

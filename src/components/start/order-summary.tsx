@@ -15,7 +15,7 @@ export function OrderSummary({ draft }: { draft: Draft }) {
     );
   }
 
-  const { items, subtotal, dueToday, balance } = computeTotals(pkg.id, draft.addOns, draft.paymentPlan);
+  const { items, total } = computeTotals(pkg.id, draft.addOns);
 
   return (
     <div className="rounded-[var(--radius-lg)] border border-line bg-surface p-7">
@@ -46,28 +46,16 @@ export function OrderSummary({ draft }: { draft: Draft }) {
 
       <div className="mt-6 space-y-2 border-t border-line pt-6">
         <div className="flex items-baseline justify-between">
-          <span className="text-[14px] text-muted">Total</span>
+          <span className="text-[14px] text-muted">Total, paid in full</span>
           <motion.span
-            key={subtotal}
+            key={total}
             initial={{ opacity: 0.4, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-[1.75rem] font-medium tracking-[-0.04em]"
           >
-            {formatPrice(subtotal)}
+            {formatPrice(total)}
           </motion.span>
         </div>
-        {balance > 0 && (
-          <>
-            <div className="flex justify-between text-[14px]">
-              <span className="text-muted">Due today (deposit)</span>
-              <span>{formatPrice(dueToday)}</span>
-            </div>
-            <div className="flex justify-between text-[14px]">
-              <span className="text-muted">Due at launch</span>
-              <span>{formatPrice(balance)}</span>
-            </div>
-          </>
-        )}
       </div>
 
       {draft.pages.length > 0 && (

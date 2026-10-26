@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { computeTotals, getPackage } from "@/lib/catalog";
+import { PAYMENT_AGREEMENT_VERSION, computeTotals, getPackage } from "@/lib/catalog";
 import { fieldErrors, orderSchema } from "@/lib/order-schema";
 import { getStripe, siteUrl } from "@/lib/server/stripe";
 import { newOrderId, saveOrder, uploadExists, updateOrder } from "@/lib/server/storage";
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   }
 
   const pkg = getPackage(order.packageId)!;
-  const totals = computeTotals(order.packageId, order.addOns, order.paymentPlan);
+  const { items, total } = computeTotals(order.packageId, order.addOns);
   const now = new Date().toISOString();
   const id = newOrderId();
 
@@ -45,44 +45,42 @@ export async function POST(request: Request) {
     updatedAt: now,
     status: "pending_payment",
     order,
-    ...totals,
+    items,
+    total,
+    paymentAgreement: {
+      version: PAYMENT_AGREEMENT_VERSION,
+      acceptedAt: now,
+      ip: request.headers.get("x-forwarded-for")?.split(",")[0].trim() || null,
+    },
   });
 
   const origin = siteUrl(request.url);
-  const isDeposit = order.paymentPlan === "deposit";
 
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: order.email,
       client_reference_id: id,
-      metadata: { orderId: id, packageId: order.packageId, paymentPlan: order.paymentPlan },
+      metadata: {
+        orderId: id,
+        packageId: order.packageId,
+        paymentAgreement: `accepted ${PAYMENT_AGREEMENT_VERSION} (all payments final)`,
+      },
+      custom_text: {
+        submit: { message: "All payments are final and non-refundable, as agreed in the Masion Web Studio payment agreement." },
+      },
       payment_intent_data: {
         description: `${pkg.name} for ${order.businessName}`,
         metadata: { orderId: id },
       },
-      line_items: isDeposit
-        ? [
-            {
-              quantity: 1,
-              price_data: {
-                currency: "usd",
-                unit_amount: totals.dueToday * 100,
-                product_data: {
-                  name: `50% deposit — ${pkg.name}`,
-                  description: `Project total ${totals.subtotal.toLocaleString("en-US", { style: "currency", currency: "USD" })}. Balance due at launch.`,
-                },
-              },
-            },
-          ]
-        : totals.items.map((item) => ({
-            quantity: item.quantity,
-            price_data: {
-              currency: "usd",
-              unit_amount: item.unitPrice * 100,
-              product_data: { name: item.id === pkg.id ? item.name : item.name.replace(/ \(.*\)$/, "") },
-            },
-          })),
+      line_items: items.map((item) => ({
+        quantity: item.quantity,
+        price_data: {
+          currency: "usd",
+          unit_amount: item.unitPrice * 100,
+          product_data: { name: item.id === pkg.id ? item.name : item.name.replace(/ \(.*\)$/, "") },
+        },
+      })),
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/start?step=review&cancelled=1`,
     });

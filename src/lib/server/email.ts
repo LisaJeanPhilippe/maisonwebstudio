@@ -26,10 +26,6 @@ export async function sendOrderConfirmation(stored: StoredOrder) {
   const { order } = stored;
   const ref = orderReference(stored.id);
   const lines = stored.items.map((i) => `  • ${i.name} — ${formatPrice(i.total)}`).join("\n");
-  const paidLine =
-    stored.balance > 0
-      ? `Deposit paid: ${formatPrice(stored.dueToday)} (balance of ${formatPrice(stored.balance)} due at launch)`
-      : `Paid in full: ${formatPrice(stored.dueToday)}`;
 
   await send(
     order.email,
@@ -40,8 +36,9 @@ Thank you for choosing Masion Web Studio. Your order ${ref} for ${order.business
 
 ${lines}
 
-Total: ${formatPrice(stored.subtotal)}
-${paidLine}
+Paid in full: ${formatPrice(stored.total)}
+
+As agreed at checkout, all payments are final and non-refundable.
 
 What happens next
 1. Within one business day we'll email you to schedule a 30-minute kickoff call.
@@ -57,13 +54,14 @@ Questions? Just reply to this email.
   if (studio) {
     await send(
       studio,
-      `New order ${ref} — ${order.businessName} (${formatPrice(stored.subtotal)})`,
+      `New order ${ref} — ${order.businessName} (${formatPrice(stored.total)})`,
       `${order.fullName} <${order.email}> ${order.phone}
 Industry: ${order.industry}
 Package: ${order.packageId} | Style: ${order.style}
 Pages: ${order.pages.join(", ")}
 ${lines}
 Goals: ${order.goals}
+Payment agreement: v${stored.paymentAgreement.version}, accepted ${stored.paymentAgreement.acceptedAt}
 Assets: ${order.files.map((f) => `${f.name} (${f.id})`).join(", ") || "none"}`,
     );
   }

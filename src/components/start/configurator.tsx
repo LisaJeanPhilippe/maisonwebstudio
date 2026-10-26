@@ -32,7 +32,7 @@ function loadInitialState(): { draft: Draft; step: StepId; notice: string | null
   let draft: Draft = EMPTY_DRAFT;
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved) draft = { ...EMPTY_DRAFT, ...JSON.parse(saved), acceptTerms: false };
+    if (saved) draft = { ...EMPTY_DRAFT, ...JSON.parse(saved), acceptTerms: false, acceptPaymentAgreement: false };
   } catch {
     /* storage unavailable — start fresh */
   }
@@ -76,8 +76,9 @@ export default function Configurator() {
   // Persist progress locally so a refresh or cancelled payment doesn't lose work.
   useEffect(() => {
     try {
-      const { acceptTerms: _ignored, ...rest } = draft;
-      void _ignored;
+      const { acceptTerms: _terms, acceptPaymentAgreement: _agreement, ...rest } = draft;
+      void _terms;
+      void _agreement;
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(rest));
     } catch {
       /* ignore */
@@ -192,7 +193,7 @@ export default function Configurator() {
 
   const current = stepIndex(step);
   const pkg = getPackage(draft.packageId);
-  const totals = pkg ? computeTotals(pkg.id, draft.addOns, draft.paymentPlan) : null;
+  const totals = pkg ? computeTotals(pkg.id, draft.addOns) : null;
   const isReview = step === "review";
   const canVisit = (i: number) => i <= current || STEPS.slice(0, i).every((s) => !Object.keys(validateStep(s.id, draft)).length);
 
@@ -278,7 +279,7 @@ export default function Configurator() {
             {isReview ? (
               <button type="button" onClick={submit} disabled={submitting} className="btn btn-primary h-13 min-w-[220px] px-8">
                 <Lock size={14} />
-                {submitting ? "Redirecting to Stripe…" : `Pay ${totals ? formatPrice(totals.dueToday) : ""} securely`}
+                {submitting ? "Redirecting to Stripe…" : `Pay ${totals ? formatPrice(totals.total) : ""} securely`}
               </button>
             ) : (
               <button type="button" onClick={next} disabled={uploading} className="btn btn-primary group h-13 px-8">
@@ -312,9 +313,9 @@ export default function Configurator() {
             </button>
           )}
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] text-muted">{isReview ? "Due today" : "Total"}</p>
+            <p className="text-[12px] text-muted">Total</p>
             <p className="truncate font-medium tracking-[-0.02em]">
-              {totals ? formatPrice(isReview ? totals.dueToday : totals.subtotal) : "—"}
+              {totals ? formatPrice(totals.total) : "—"}
             </p>
           </div>
           {isReview ? (

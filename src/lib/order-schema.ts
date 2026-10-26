@@ -58,7 +58,9 @@ export const assetsStepSchema = z.object({
 });
 
 export const reviewStepSchema = z.object({
-  paymentPlan: z.enum(["full", "deposit"]),
+  acceptPaymentAgreement: z.literal(true, {
+    message: "Please confirm you understand that all payments are final.",
+  }),
   acceptTerms: z.literal(true, { message: "Please accept the terms to continue." }),
 });
 

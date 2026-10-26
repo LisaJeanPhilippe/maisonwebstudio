@@ -4,7 +4,7 @@ export const metadata: Metadata = { title: "Project terms" };
 
 const TERMS = [
   ["Scope", "Your project includes the pages, features and revision rounds listed in your package and any add-ons purchased. Additional work beyond this scope is quoted separately before it begins."],
-  ["Payment", "You may pay in full or pay a 50% deposit at checkout. When paying a deposit, the remaining balance is due before your site launches."],
+  ["Payment", "Every project is paid in full at checkout. All payments are final and non-refundable, as set out in our payment agreement."],
   ["Timeline", "Timelines are estimates that begin once we’ve received your content and completed the kickoff call. Delays in receiving content or feedback may shift your launch date."],
   ["Revisions", "Each package includes a set number of revision rounds. A round is a consolidated set of feedback on the current design or build."],
   ["Content & assets", "You confirm you have the right to use any logos, images and text you provide. We may recommend licensed imagery where needed."],
