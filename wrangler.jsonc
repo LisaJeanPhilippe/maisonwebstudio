@@ -1,7 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "masion-web-studio",
-  "main": ".open-next/worker.js",
+  // Wraps the OpenNext worker with an HTTPS redirect and the daily retention job.
+  "main": "cloudflare/worker.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
@@ -11,13 +12,21 @@
   "observability": { "enabled": true },
   "r2_buckets": [
     {
-      // Orders and customer uploads. Create it once with:
+      // Orders and customer uploads (private). Create it once with:
       //   npx wrangler r2 bucket create masion-web-studio-data
       "binding": "MASION_DATA",
       "bucket_name": "masion-web-studio-data"
     }
-  ]
+  ],
+  // Abuse protection for the public order endpoints (per client IP).
+  "ratelimits": [
+    { "name": "CHECKOUT_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
+    { "name": "UPLOAD_LIMITER", "namespace_id": "1002", "simple": { "limit": 30, "period": 60 } }
+  ],
+  // Daily data-retention job (03:17 UTC).
+  "triggers": { "crons": ["17 3 * * *"] }
   // Secrets (set with `npx wrangler secret put NAME` or in the dashboard):
   //   STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY,
   //   EMAIL_FROM, STUDIO_NOTIFICATION_EMAIL
+  // Build-time variable (Workers Builds → Variables): NEXT_PUBLIC_SITE_URL
 }

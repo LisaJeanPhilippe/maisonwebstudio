@@ -1,32 +1,66 @@
 import "server-only";
 import type Stripe from "stripe";
 import { sendOrderConfirmation } from "./email";
-import { getOrder, updateOrder, type StoredOrder } from "./storage";
+import { getOrder, updateOrder, type OrderStatus, type StoredOrder } from "./storage";
+
+/** States an order can no longer leave through ordinary checkout events. */
+const SETTLED: OrderStatus[] = ["paid", "refunded", "partially_refunded", "needs_review"];
+
+function orderIdFrom(session: Stripe.Checkout.Session) {
+  return session.metadata?.orderId ?? session.client_reference_id ?? null;
+}
 
 /**
- * Marks an order as paid from a completed Checkout Session and sends the
- * confirmation email once. Safe to call repeatedly (webhook + success page).
+ * Trusted payment handling — called only from the signature-verified webhook.
+ * Marks the order paid after checking the session matches what we charged,
+ * and sends the confirmation exactly once.
  */
-export async function fulfillCheckoutSession(session: Stripe.Checkout.Session): Promise<StoredOrder | null> {
-  const orderId = session.metadata?.orderId ?? session.client_reference_id;
-  if (!orderId) return null;
-  const order = await getOrder(orderId);
-  if (!order) return null;
+export async function handlePaidSession(session: Stripe.Checkout.Session): Promise<StoredOrder | null> {
+  const id = orderIdFrom(session);
+  const order = id ? await getOrder(id) : null;
+  if (!order) {
+    console.warn(`[webhook] Paid session ${session.id} has no matching order`);
+    return null;
+  }
   if (session.payment_status !== "paid") return order;
 
-  if (order.status === "pending_payment" || !order.confirmationSentAt) {
-    const paymentIntent =
-      typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
-    const updated = await updateOrder(order.id, {
-      status: "paid",
-      stripeSessionId: session.id,
+  const expectedCents = order.total * 100;
+  const mismatch =
+    session.amount_total !== expectedCents ||
+    session.currency !== "usd" ||
+    (order.stripeSessionId && order.stripeSessionId !== session.id);
+  const paymentIntent = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
+
+  if (mismatch) {
+    console.error(`[webhook] Order ${order.id} payment does not match the order — flagged for review`);
+    return updateOrder(order.id, {
+      status: "needs_review",
+      reviewReason: `Stripe session ${session.id} amount ${session.amount_total} ${session.currency} vs expected ${expectedCents} usd`,
       stripePaymentIntentId: paymentIntent,
     });
-    if (updated && !updated.confirmationSentAt) {
-      await sendOrderConfirmation(updated);
-      return updateOrder(order.id, { confirmationSentAt: new Date().toISOString() });
-    }
-    return updated;
   }
-  return order;
+
+  let updated = order;
+  if (!SETTLED.includes(order.status)) {
+    updated = (await updateOrder(order.id, { status: "paid", stripeSessionId: session.id, stripePaymentIntentId: paymentIntent })) ?? order;
+  }
+  if (updated.status === "paid" && !updated.confirmationSentAt) {
+    await sendOrderConfirmation(updated);
+    updated = (await updateOrder(order.id, { confirmationSentAt: new Date().toISOString() })) ?? updated;
+  }
+  return updated;
+}
+
+/** Moves an unpaid order to another state without ever downgrading a settled one. */
+export async function setUnpaidStatus(session: Stripe.Checkout.Session, status: "processing" | "payment_failed" | "cancelled") {
+  const id = orderIdFrom(session);
+  const order = id ? await getOrder(id) : null;
+  if (!order || SETTLED.includes(order.status)) return order;
+  return updateOrder(order.id, { status });
+}
+
+export async function handleRefund(orderId: string, fullyRefunded: boolean) {
+  const order = await getOrder(orderId);
+  if (!order) return null;
+  return updateOrder(order.id, { status: fullyRefunded ? "refunded" : "partially_refunded" });
 }

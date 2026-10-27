@@ -11,9 +11,12 @@
   --color-ink: #111111;
   --color-ink-soft: #2a2a28;
   --color-muted: #6b6b6b;
-  --color-subtle: #9a9893;
+  /* Darkened from #9a9893 to meet WCAG AA text contrast (4.8:1 on canvas). */
+  --color-subtle: #6f6d68;
   --color-line: #e7e5e0;
   --color-line-strong: #d6d3cc;
+  /* Outline for form controls: meets the 3:1 non-text contrast requirement. */
+  --color-control: #8a867e;
   --color-sage: #7f8a72;
   --color-sage-soft: #e4e7de;
   --color-sage-deep: #4f5847;
@@ -92,7 +95,28 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-ink);
   outline-offset: 3px;
-  border-radius: 6px;
+}
+/* Light focus ring on dark surfaces so it stays visible. */
+.theme-dark :focus-visible {
+  outline-color: var(--color-canvas);
+}
+
+/* Scripts that don't suit tight Latin tracking or line-height. */
+:lang(ar),
+:lang(hi),
+:lang(bn),
+:lang(zh) {
+  letter-spacing: normal !important;
+}
+:lang(ar) { font-family: var(--font-geist-sans), "Noto Sans Arabic", "Segoe UI", Tahoma, "Geeza Pro", sans-serif; }
+:lang(hi) { font-family: var(--font-geist-sans), "Noto Sans Devanagari", "Nirmala UI", "Kohinoor Devanagari", sans-serif; }
+:lang(bn) { font-family: var(--font-geist-sans), "Noto Sans Bengali", "Nirmala UI", "Kohinoor Bangla", sans-serif; }
+:lang(zh-Hans) { font-family: var(--font-geist-sans), "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif; }
+:is(:lang(ar), :lang(hi), :lang(bn)) :is(.text-display, .text-headline, .text-title) {
+  line-height: 1.25;
+}
+:lang(zh-Hans) :is(.text-display, .text-headline) {
+  line-height: 1.15;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -185,14 +209,14 @@ body {
     min-height: 3rem;
     padding: 0.75rem 1rem;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--color-line-strong);
+    border: 1px solid var(--color-control);
     background: var(--color-surface);
     font-size: 1rem;
     color: var(--color-ink);
     transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
   }
   .field-input::placeholder { color: var(--color-subtle); }
-  .field-input:hover { border-color: #bdb9b0; }
+  .field-input:hover { border-color: var(--color-ink-soft); }
   .field-input:focus {
     outline: none;
     border-color: var(--color-ink);

@@ -8,10 +8,13 @@ import type { Project } from "@/lib/projects";
  */
 export function ProjectMedia({
   project,
+  label,
   variant = "wide",
   className = "",
 }: {
   project: Project;
+  /** Text alternative describing the preview, e.g. "Preview of the Aurelia Skin sample website". */
+  label: string;
   variant?: "wide" | "tall" | "phones";
   className?: string;
 }) {
@@ -21,6 +24,8 @@ export function ProjectMedia({
   if (variant === "phones") {
     return (
       <div
+        role="img"
+        aria-label={label}
         className={`relative flex items-center justify-center gap-[6%] overflow-hidden rounded-[var(--radius-media)] px-[8%] py-[10%] ${className}`}
         style={{ background: project.surface }}
       >
@@ -34,7 +39,7 @@ export function ProjectMedia({
           screenBg={project.screen}
           className="mt-[16%] w-[42%] transition-transform duration-700 ease-out-soft group-hover:translate-y-1"
         >
-          <div className="-mt-[440px]">
+          <div style={{ marginTop: -440 }}>
             <Demo />
           </div>
         </PhoneFrame>
@@ -44,6 +49,8 @@ export function ProjectMedia({
 
   return (
     <div
+      role="img"
+      aria-label={label}
       className={`relative overflow-hidden rounded-[var(--radius-media)] ${className}`}
       style={{ background: project.surface }}
     >
@@ -62,7 +69,7 @@ export function ProjectMedia({
         </BrowserFrame>
       </div>
       {variant === "wide" && (
-        <div className="absolute bottom-[-12%] right-[4%] hidden w-[17%] transition-transform duration-[900ms] ease-out-soft group-hover:-translate-y-3 md:block">
+        <div className="absolute bottom-[-12%] end-[4%] hidden w-[17%] transition-transform duration-[900ms] ease-out-soft group-hover:-translate-y-3 md:block">
           <PhoneFrame screenBg={project.screen}>
             <Demo />
           </PhoneFrame>

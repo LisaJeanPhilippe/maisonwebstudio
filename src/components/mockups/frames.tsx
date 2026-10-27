@@ -8,7 +8,9 @@ export function BrowserFrame({
   className = "",
   aspect = "aspect-[16/10]",
   tone = "light",
+  eager = false,
 }: {
+  eager?: boolean;
   url: string;
   children: ReactNode;
   className?: string;
@@ -18,6 +20,7 @@ export function BrowserFrame({
   const dark = tone === "dark";
   return (
     <div
+      aria-hidden
       className={`overflow-hidden rounded-[14px] border shadow-device ${
         dark ? "border-white/10 bg-[#1b1a18]" : "border-black/[0.06] bg-white"
       } ${className}`}
@@ -33,11 +36,11 @@ export function BrowserFrame({
             dark ? "bg-white/[0.06] text-white/50" : "bg-white text-black/45"
           }`}
         >
-          {url}
+          <span dir="ltr">{url}</span>
         </div>
         <div className="w-10" />
       </div>
-      <ScaledSite width={1280} className={aspect}>
+      <ScaledSite width={1280} className={aspect} eager={eager}>
         {children}
       </ScaledSite>
     </div>
@@ -49,18 +52,21 @@ export function PhoneFrame({
   children,
   className = "",
   screenBg = "#fff",
+  eager = false,
 }: {
+  eager?: boolean;
   children: ReactNode;
   className?: string;
   screenBg?: string;
 }) {
   return (
     <div
+      aria-hidden
       className={`rounded-[2.4rem] bg-[#111] p-[7px] shadow-device ring-1 ring-black/10 ${className}`}
     >
       <div className="relative overflow-hidden rounded-[2rem]" style={{ background: screenBg }}>
         <div className="absolute left-1/2 top-2 z-10 h-[18px] w-[30%] -translate-x-1/2 rounded-full bg-[#111]" />
-        <ScaledSite width={390} className="aspect-[390/844]">
+        <ScaledSite width={390} className="aspect-[390/844]" eager={eager}>
           <div className="pt-8">{children}</div>
         </ScaledSite>
       </div>

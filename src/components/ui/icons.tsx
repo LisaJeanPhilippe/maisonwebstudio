@@ -2,7 +2,7 @@ import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement> & { size?: number };
 
-function base({ size = 16, ...props }: IconProps) {
+function base({ size = 16, ...props }: IconProps, directional = false) {
   return {
     width: size,
     height: size,
@@ -13,18 +13,21 @@ function base({ size = 16, ...props }: IconProps) {
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
     "aria-hidden": true,
+    focusable: false,
     ...props,
+    // Directional arrows mirror in right-to-left languages.
+    className: `${directional ? "rtl:-scale-x-100 " : ""}${props.className ?? ""}`,
   };
 }
 
 export const ArrowRight = (p: IconProps) => (
-  <svg {...base(p)}><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+  <svg {...base(p, true)}><path d="M3 8h10M9 4l4 4-4 4" /></svg>
 );
 export const ArrowUpRight = (p: IconProps) => (
-  <svg {...base(p)}><path d="M5 11l6-6M6 5h5v5" /></svg>
+  <svg {...base(p, true)}><path d="M5 11l6-6M6 5h5v5" /></svg>
 );
 export const ArrowLeft = (p: IconProps) => (
-  <svg {...base(p)}><path d="M13 8H3M7 4L3 8l4 4" /></svg>
+  <svg {...base(p, true)}><path d="M13 8H3M7 4L3 8l4 4" /></svg>
 );
 export const Check = (p: IconProps) => (
   <svg {...base(p)}><path d="M3.5 8.5l3 3 6-7" /></svg>

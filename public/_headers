@@ -1,0 +1,11 @@
+# Cloudflare static-asset headers (files in /public and /_next/static are served
+# without running the app, so they need their own security headers).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000
+  Cross-Origin-Resource-Policy: same-origin
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable

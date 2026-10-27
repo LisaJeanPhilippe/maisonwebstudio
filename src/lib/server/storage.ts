@@ -14,7 +14,15 @@ import type { Order } from "@/lib/order-schema";
  * Anywhere else (plain `next start`), the same layout is written to DATA_DIR on disk.
  */
 
-export type OrderStatus = "pending_payment" | "paid" | "cancelled";
+export type OrderStatus =
+  | "pending_payment"
+  | "processing"
+  | "paid"
+  | "payment_failed"
+  | "cancelled"
+  | "refunded"
+  | "partially_refunded"
+  | "needs_review";
 
 export type StoredOrder = {
   id: string;
@@ -24,14 +32,16 @@ export type StoredOrder = {
   order: Order;
   items: LineItem[];
   total: number;
-  /** Record of the customer accepting the final-payment agreement. */
-  paymentAgreement: { version: string; acceptedAt: string; ip: string | null };
+  /** Record of the customer accepting the final-payment agreement (Stripe separately records payment details). */
+  paymentAgreement: { version: string; acceptedAt: string };
+  /** Why an order needs a human to look at it, e.g. an amount mismatch. */
+  reviewReason?: string;
   stripeSessionId?: string;
   stripePaymentIntentId?: string;
   confirmationSentAt?: string;
 };
 
-type Blob = { key: string; body: string | ArrayBuffer; contentType: string };
+type Blob = { key: string; body: string | ArrayBuffer; contentType: string; download?: boolean };
 
 interface DataStore {
   get(key: string): Promise<string | null>;
@@ -43,7 +53,11 @@ interface DataStore {
 type R2Like = {
   get(key: string): Promise<{ text(): Promise<string> } | null>;
   head(key: string): Promise<unknown | null>;
-  put(key: string, value: string | ArrayBuffer, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+  put(
+    key: string,
+    value: string | ArrayBuffer,
+    options?: { httpMetadata?: { contentType?: string; contentDisposition?: string } },
+  ): Promise<unknown>;
 };
 
 function r2Store(bucket: R2Like): DataStore {
@@ -52,8 +66,11 @@ function r2Store(bucket: R2Like): DataStore {
       const obj = await bucket.get(key);
       return obj ? obj.text() : null;
     },
-    async put({ key, body, contentType }) {
-      await bucket.put(key, body, { httpMetadata: { contentType } });
+    async put({ key, body, contentType, download }) {
+      // Customer files are always served as downloads, never rendered inline.
+      await bucket.put(key, body, {
+        httpMetadata: { contentType, contentDisposition: download ? "attachment" : undefined },
+      });
     },
     async exists(key) {
       return (await bucket.head(key)) !== null;
@@ -65,7 +82,12 @@ function diskStore(): DataStore {
   const root = process.env.DATA_DIR
     ? path.resolve(/*turbopackIgnore: true*/ process.env.DATA_DIR)
     : path.join(/*turbopackIgnore: true*/ process.cwd(), ".data");
-  const file = (key: string) => path.join(root, ...key.split("/"));
+  const file = (key: string) => {
+    const target = path.resolve(root, ...key.split("/"));
+    // Defence in depth: keys are generated server-side, but never allow escaping the data folder.
+    if (!target.startsWith(root + path.sep)) throw new Error("Invalid storage key");
+    return target;
+  };
   return {
     async get(key) {
       try {
@@ -141,10 +163,10 @@ export async function saveUpload(
   file: File,
 ): Promise<{ id: string; name: string; size: number; type: string }> {
   const id = crypto.randomUUID();
-  const safeName = file.name.replace(/[^\w.\- ]+/g, "_").slice(-120) || "file";
+  const safeName = sanitizeFileName(file.name);
   const type = file.type || "application/octet-stream";
   const s = store();
-  await s.put({ key: `uploads/${id}/${safeName}`, body: await file.arrayBuffer(), contentType: type });
+  await s.put({ key: `uploads/${id}/${safeName}`, body: await file.arrayBuffer(), contentType: type, download: true });
   await s.put(
     json(`uploads/${id}/meta.json`, {
       id,
@@ -156,6 +178,34 @@ export async function saveUpload(
     }),
   );
   return { id, name: safeName, size: file.size, type };
+}
+
+/** Keeps letters, digits, dot, dash, underscore and space; no leading dots or path separators. */
+export function sanitizeFileName(name: string): string {
+  const cleaned = name
+    .normalize("NFKC")
+    .replace(/[^\p{L}\p{N}._\- ]+/gu, "_")
+    .replace(/^[.\s]+/, "")
+    .slice(-120)
+    .trim();
+  return cleaned || "file";
+}
+
+export async function isEventProcessed(eventId: string): Promise<boolean> {
+  return /^evt_[A-Za-z0-9]+$/.test(eventId) && store().exists(`events/${eventId}.json`);
+}
+
+/**
+ * Records that a Stripe event was processed. Returns false if it was already
+ * recorded, so duplicate deliveries are ignored.
+ */
+export async function markEventProcessed(eventId: string): Promise<boolean> {
+  if (!/^evt_[A-Za-z0-9]+$/.test(eventId)) return false;
+  const s = store();
+  const key = `events/${eventId}.json`;
+  if (await s.exists(key)) return false;
+  await s.put(json(key, { processedAt: new Date().toISOString() }));
+  return true;
 }
 
 export async function uploadExists(id: string): Promise<boolean> {

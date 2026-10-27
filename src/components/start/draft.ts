@@ -8,6 +8,7 @@ import {
   packageStepSchema,
   projectStepSchema,
   reviewStepSchema,
+  type ErrorCode,
   type UploadedFile,
 } from "@/lib/order-schema";
 
@@ -32,6 +33,8 @@ export type Draft = {
   assetNotes: string;
   acceptTerms: boolean;
   acceptPaymentAgreement: boolean;
+  /** Honeypot — never shown to people, never persisted. */
+  website2: string;
 };
 
 export const EMPTY_DRAFT: Draft = {
@@ -55,28 +58,28 @@ export const EMPTY_DRAFT: Draft = {
   assetNotes: "",
   acceptTerms: false,
   acceptPaymentAgreement: false,
+  website2: "",
 };
 
-export const STEPS = [
-  { id: "package", label: "Package" },
-  { id: "configure", label: "Configure" },
-  { id: "addons", label: "Add-ons" },
-  { id: "details", label: "Your project" },
-  { id: "assets", label: "Assets" },
-  { id: "review", label: "Review & pay" },
-] as const;
+/** Fields that must never be restored from storage. */
+export const NON_PERSISTED: (keyof Draft)[] = ["acceptTerms", "acceptPaymentAgreement", "website2"];
 
-export type StepId = (typeof STEPS)[number]["id"];
+export const STEP_IDS = ["package", "configure", "addons", "details", "assets", "review"] as const;
+export type StepId = (typeof STEP_IDS)[number];
 
-export const DEFAULT_PAGES: Record<PackageId, string[]> = {
-  starter: ["Home", "About", "Contact"],
-  business: ["Home", "About", "Services", "Gallery", "Contact"],
-  premium: ["Home", "About", "Services", "Gallery", "Journal", "Contact"],
+export type PageKey =
+  | "home" | "about" | "services" | "contact" | "gallery" | "journal" | "menu" | "shop"
+  | "booking" | "team" | "pricing" | "faq" | "testimonials" | "careers" | "locations" | "events";
+
+export const DEFAULT_PAGES: Record<PackageId, PageKey[]> = {
+  starter: ["home", "about", "contact"],
+  business: ["home", "about", "services", "gallery", "contact"],
+  premium: ["home", "about", "services", "gallery", "journal", "contact"],
 };
 
-export const PAGE_SUGGESTIONS = [
-  "Home", "About", "Services", "Contact", "Gallery", "Menu", "Shop", "Booking",
-  "Team", "Pricing", "FAQ", "Journal", "Testimonials", "Careers", "Locations", "Events",
+export const PAGE_SUGGESTIONS: PageKey[] = [
+  "home", "about", "services", "contact", "gallery", "menu", "shop", "booking",
+  "team", "pricing", "faq", "journal", "testimonials", "careers", "locations", "events",
 ];
 
 /** Extra pages beyond the package allowance are billed automatically. */
@@ -87,7 +90,6 @@ export function withDerivedAddOns(draft: Draft): Draft {
   const addOns = { ...draft.addOns };
   if (extra > 0) addOns["extra-pages"] = extra;
   else delete addOns["extra-pages"];
-  // Drop add-ons that the chosen package already includes.
   for (const id of Object.keys(addOns) as (keyof SelectedAddOns)[]) {
     if (!addOns[id]) delete addOns[id];
   }
@@ -103,7 +105,7 @@ const STEP_SCHEMAS: Record<StepId, z.ZodType> = {
   review: reviewStepSchema,
 };
 
-export function validateStep(step: StepId, draft: Draft): Record<string, string> {
+export function validateStep(step: StepId, draft: Draft): Record<string, ErrorCode> {
   const result = STEP_SCHEMAS[step].safeParse(draft);
   return result.success ? {} : fieldErrors(result.error);
 }

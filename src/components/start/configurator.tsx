@@ -1,14 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { computeTotals, formatPrice, getPackage, type PackageId } from "@/lib/catalog";
+import { computeTotals, getPackage, type PackageId } from "@/lib/catalog";
 import { ArrowLeft, ArrowRight, Lock } from "@/components/ui/icons";
+import { useI18n } from "@/i18n/client";
+import { fmt, formatPrice, plur } from "@/i18n/format";
+import type { ClientMessages } from "@/i18n/messages";
+import { SITE } from "@/lib/site";
 import { AssetsStep } from "./assets-step";
 import {
   DEFAULT_PAGES,
   EMPTY_DRAFT,
-  STEPS,
+  NON_PERSISTED,
+  STEP_IDS,
   validateStep,
   withDerivedAddOns,
   type Draft,
@@ -18,32 +23,43 @@ import { OrderSummary } from "./order-summary";
 import { ReviewStep } from "./review-step";
 import { AddOnsStep, ConfigureStep, DetailsStep, PackageStep } from "./steps";
 
-export const STORAGE_KEY = "masion:configurator:v1";
+/**
+ * Progress is kept in sessionStorage: it survives refreshes and the round trip
+ * to Stripe, but is discarded when the tab closes, so customer details don't
+ * linger on shared computers.
+ */
+export const STORAGE_KEY = "masion:configurator:v2";
+const CHECKOUT_TIMEOUT_MS = 25_000;
 
-const stepIndex = (id: StepId) => STEPS.findIndex((s) => s.id === id);
-const isStep = (v: string | null): v is StepId => STEPS.some((s) => s.id === v);
+const stepIndex = (id: StepId) => STEP_IDS.indexOf(id);
+const isStep = (v: string | null): v is StepId => (STEP_IDS as readonly string[]).includes(v ?? "");
+const hasErrors = (step: StepId, draft: Draft) => Object.keys(validateStep(step, draft)).length > 0;
 
-function firstInvalidStep(draft: Draft): StepId | null {
-  for (const s of STEPS) if (Object.keys(validateStep(s.id, draft)).length) return s.id;
-  return null;
+function defaultPages(m: ClientMessages, id: PackageId) {
+  return DEFAULT_PAGES[id].map((k) => m.pageNames[k]);
 }
 
-function loadInitialState(): { draft: Draft; step: StepId; notice: string | null } {
-  let draft: Draft = EMPTY_DRAFT;
+function readSaved(): Partial<Draft> {
   try {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved) draft = { ...EMPTY_DRAFT, ...JSON.parse(saved), acceptTerms: false, acceptPaymentAgreement: false };
+    const saved = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!saved) return {};
+    const parsed = JSON.parse(saved) as Partial<Draft>;
+    for (const key of NON_PERSISTED) delete parsed[key];
+    return parsed;
   } catch {
-    /* storage unavailable — start fresh */
+    return {};
   }
+}
 
+function loadInitialState(m: ClientMessages): { draft: Draft; step: StepId; notice: string | null } {
+  let draft: Draft = { ...EMPTY_DRAFT, ...readSaved() };
   const params = new URLSearchParams(window.location.search);
   const requested = params.get("package");
   let step: StepId = "package";
 
   if (getPackage(requested)) {
     const id = requested as PackageId;
-    if (draft.packageId !== id) draft = { ...draft, packageId: id, pages: DEFAULT_PAGES[id] };
+    if (draft.packageId !== id) draft = { ...draft, packageId: id, pages: defaultPages(m, id) };
     step = "configure";
   } else if (draft.packageId) {
     step = "configure";
@@ -52,182 +68,220 @@ function loadInitialState(): { draft: Draft; step: StepId; notice: string | null
   const wanted = params.get("step");
   if (isStep(wanted)) {
     // Only jump ahead if everything before it is complete.
-    const blocker = STEPS.slice(0, stepIndex(wanted)).find((s) => Object.keys(validateStep(s.id, draft)).length);
-    step = blocker ? blocker.id : wanted;
+    const blocker = STEP_IDS.slice(0, stepIndex(wanted)).find((s) => hasErrors(s, draft));
+    step = blocker ?? wanted;
   }
 
-  const notice = params.get("cancelled")
-    ? "Payment was cancelled — nothing was charged. Your details are saved, so you can pick up right here."
-    : null;
+  const notice = params.get("cancelled") ? m.configurator.cancelledNotice : null;
   return { draft: withDerivedAddOns(draft), step, notice };
 }
 
+type ApiError = { code?: keyof ClientMessages["configurator"]["errors"]; fields?: Record<string, string> };
+
 export default function Configurator() {
-  const [initial] = useState(loadInitialState);
+  const { locale, m } = useI18n();
+  const c = m.configurator;
+  const [initial] = useState(() => loadInitialState(m));
   const [draft, setDraft] = useState<Draft>(initial.draft);
   const [step, setStep] = useState<StepId>(initial.step);
+  // Error codes (translated at render time). Server codes are kept until the field changes.
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverFieldErrors, setServerFieldErrors] = useState<Record<string, string>>({});
+  const [showSummary, setShowSummary] = useState(false);
   const [notice, setNotice] = useState<string | null>(initial.notice);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const top = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
 
-  // Persist progress locally so a refresh or cancelled payment doesn't lose work.
+  // Persist progress for this tab (never the agreement checkboxes or honeypot).
   useEffect(() => {
     try {
-      const { acceptTerms: _terms, acceptPaymentAgreement: _agreement, ...rest } = draft;
-      void _terms;
-      void _agreement;
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(rest));
+      const copy: Partial<Draft> = { ...draft };
+      for (const key of NON_PERSISTED) delete copy[key];
+      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(copy));
     } catch {
-      /* ignore */
+      /* storage unavailable — the form still works */
     }
   }, [draft]);
 
-  // Keep the URL in sync with the current step.
+  // Keep the URL in sync with the current step (no personal data in the URL).
   useEffect(() => {
     const url = new URL(window.location.href);
     url.searchParams.set("step", step);
     url.searchParams.delete("cancelled");
     url.searchParams.delete("package");
-    window.history.replaceState(null, "", url);
+    window.history.replaceState(window.history.state, "", url);
+  }, [step]);
+
+  // Move focus to the new step's heading so keyboard and screen-reader users land in the right place.
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    const t = window.setTimeout(() => {
+      document.getElementById("step-title")?.focus({ preventScroll: true });
+      top.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 450);
+    return () => window.clearTimeout(t);
   }, [step]);
 
   const update = useCallback((patch: Partial<Draft> | ((d: Draft) => Partial<Draft>)) => {
     setDraft((d) => withDerivedAddOns({ ...d, ...(typeof patch === "function" ? patch(d) : patch) }));
     setServerError(null);
+    setServerFieldErrors({});
   }, []);
 
   const goTo = (next: StepId) => {
     setErrors({});
+    setServerFieldErrors({});
+    setShowSummary(false);
     setStep(next);
     setNotice(null);
-    requestAnimationFrame(() => top.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
-  const focusFirstError = (errs: Record<string, string>) => {
+  const showErrors = (errs: Record<string, string>) => {
+    setErrors(errs);
+    setShowSummary(true);
     requestAnimationFrame(() => {
       const first = Object.keys(errs)[0];
-      const el = first ? document.getElementById(first.split(".")[0]) : null;
-      if (el) el.focus({ preventScroll: false });
-      else top.current?.scrollIntoView({ behavior: "smooth" });
+      const el = first ? document.getElementById(first) : null;
+      (el ?? document.getElementById("error-summary"))?.focus();
     });
   };
 
   const onPackageSelect = (id: PackageId) => {
     setDraft((d) => {
-      // Reset the page list to sensible defaults when switching packages,
-      // unless the customer has already customised it.
-      const defaults = d.packageId ? DEFAULT_PAGES[d.packageId] : [];
+      // Reset the page list to the package defaults unless the customer customised it.
+      const defaults = d.packageId ? defaultPages(m, d.packageId) : [];
       const untouched = d.pages.length === 0 || d.pages.join() === defaults.join();
-      return withDerivedAddOns({ ...d, packageId: id, pages: untouched ? DEFAULT_PAGES[id] : d.pages });
+      return withDerivedAddOns({ ...d, packageId: id, pages: untouched ? defaultPages(m, id) : d.pages });
     });
   };
 
   const next = () => {
     const errs = validateStep(step, draft);
-    if (Object.keys(errs).length) {
-      setErrors(errs);
-      focusFirstError(errs);
-      return;
-    }
+    if (Object.keys(errs).length) return showErrors(errs);
     const i = stepIndex(step);
-    if (i < STEPS.length - 1) goTo(STEPS[i + 1].id);
+    if (i < STEP_IDS.length - 1) goTo(STEP_IDS[i + 1]);
   };
 
   const back = () => {
     const i = stepIndex(step);
-    if (i > 0) goTo(STEPS[i - 1].id);
+    if (i > 0) goTo(STEP_IDS[i - 1]);
   };
 
   const submit = async () => {
+    if (submitting) return;
     const errs = validateStep("review", draft);
-    if (Object.keys(errs).length) {
-      setErrors(errs);
-      return;
-    }
-    const invalid = firstInvalidStep(draft);
-    if (invalid && invalid !== "review") {
+    if (Object.keys(errs).length) return showErrors(errs);
+    const invalid = STEP_IDS.find((s) => s !== "review" && hasErrors(s, draft));
+    if (invalid) {
       goTo(invalid);
-      setErrors(validateStep(invalid, draft));
       return;
     }
 
     if (process.env.NEXT_PUBLIC_STATIC_PREVIEW === "1") {
-      setServerError(
-        "This is a preview link, so payments are turned off. On the live site this button opens secure Stripe Checkout.",
-      );
+      setServerError(c.previewNotice);
       return;
     }
 
     setSubmitting(true);
     setServerError(null);
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), CHECKOUT_TIMEOUT_MS);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draft),
+        body: JSON.stringify({ ...draft, locale }),
+        signal: controller.signal,
       });
-      const body = await res.json().catch(() => ({}));
-      if (res.ok && body.url) {
+      const body = (await res.json().catch(() => ({}))) as ApiError & { url?: string };
+      // Only ever redirect to Stripe's hosted checkout.
+      if (res.ok && typeof body.url === "string" && body.url.startsWith("https://checkout.stripe.com/")) {
         window.location.assign(body.url);
         return;
       }
       if (res.status === 422 && body.fields) {
-        const bad = STEPS.find((s) => Object.keys(validateStep(s.id, draft)).length)?.id ?? "details";
-        goTo(bad);
-        setErrors(body.fields);
+        const bad = STEP_IDS.find((s) => hasErrors(s, draft)) ?? "details";
+        if (bad !== step) goTo(bad);
+        setServerFieldErrors(body.fields);
+        setShowSummary(true);
       }
-      setServerError(body.error || "Something went wrong. Please try again.");
-    } catch {
-      setServerError("We couldn’t reach the server. Check your connection and try again.");
+      setServerError(c.errors[body.code ?? "generic"] ?? c.errors.generic);
+    } catch (err) {
+      setServerError(err instanceof DOMException && err.name === "AbortError" ? c.errors.timeout : c.errors.network);
+    } finally {
+      window.clearTimeout(timer);
     }
     setSubmitting(false);
   };
 
-  // Errors disappear as soon as the field becomes valid.
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (step === "review") void submit();
+    else next();
+  };
+
+  const clearSaved = () => {
+    try {
+      window.sessionStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    setDraft(EMPTY_DRAFT);
+    setErrors({});
+    setShowSummary(false);
+    setStep("package");
+    setNotice(c.clearedSaved);
+  };
+
+  // Client errors disappear as soon as the field becomes valid; all codes are translated here.
   const live = validateStep(step, draft);
+  const translate = (code: string) => m.validation[code as keyof typeof m.validation] ?? m.validation.invalid;
   const shownErrors: Record<string, string> = {};
-  for (const k of Object.keys(errors)) if (live[k]) shownErrors[k] = live[k];
+  for (const k of Object.keys(errors)) if (live[k]) shownErrors[k] = translate(live[k]);
+  for (const [k, code] of Object.entries(serverFieldErrors)) shownErrors[k] ??= translate(code);
+  const errorCount = Object.keys(shownErrors).length;
 
   const current = stepIndex(step);
   const pkg = getPackage(draft.packageId);
   const totals = pkg ? computeTotals(pkg.id, draft.addOns) : null;
+  const total = totals ? formatPrice(locale, totals.total) : "—";
   const isReview = step === "review";
-  const canVisit = (i: number) => i <= current || STEPS.slice(0, i).every((s) => !Object.keys(validateStep(s.id, draft)).length);
+  const canVisit = (i: number) => i <= current || STEP_IDS.slice(0, i).every((s) => !hasErrors(s, draft));
 
   return (
     <div ref={top} className="container-page scroll-mt-[calc(var(--nav-height)+8px)] pb-40 pt-8 md:pb-24 md:pt-12">
-      {/* Progress */}
-      <nav aria-label="Checkout progress" className="mb-10 md:mb-14">
-        <div className="mb-4 h-[2px] overflow-hidden rounded-full bg-line md:hidden">
+      <nav aria-label={c.progressLabel} className="mb-10 md:mb-14">
+        <div className="mb-4 h-[2px] overflow-hidden rounded-full bg-line md:hidden" aria-hidden>
           <motion.div
             className="h-full bg-ink"
-            animate={{ width: `${((current + 1) / STEPS.length) * 100}%` }}
+            animate={{ width: `${((current + 1) / STEP_IDS.length) * 100}%` }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           />
         </div>
-        <ol className="no-scrollbar -mx-[var(--space-gutter)] flex gap-1 overflow-x-auto px-[var(--space-gutter)]">
-          {STEPS.map((s, i) => {
+        <ol className="no-scrollbar -mx-[var(--space-gutter)] flex gap-1 overflow-x-auto px-[var(--space-gutter)] py-1">
+          {STEP_IDS.map((s, i) => {
             const state = i === current ? "current" : i < current ? "done" : "todo";
             return (
-              <li key={s.id} className="shrink-0">
+              <li key={s} className="shrink-0">
                 <button
                   type="button"
                   disabled={!canVisit(i) || submitting}
-                  onClick={() => goTo(s.id)}
+                  onClick={() => goTo(s)}
                   aria-current={state === "current" ? "step" : undefined}
-                  className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-[13.5px] transition-colors disabled:cursor-not-allowed ${
-                    state === "current"
-                      ? "bg-ink text-canvas"
-                      : state === "done"
-                        ? "text-ink hover:bg-surface"
-                        : "text-subtle"
+                  className={`flex min-h-10 items-center gap-2 rounded-full px-3.5 text-[13.5px] transition-colors disabled:cursor-not-allowed ${
+                    state === "current" ? "bg-ink text-canvas" : state === "done" ? "text-ink hover:bg-surface" : "text-muted"
                   }`}
                 >
-                  <span className="font-mono text-[11px] opacity-60">0{i + 1}</span>
-                  {s.label}
+                  <span className="font-mono text-[11px] opacity-80" aria-hidden>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {c.steps[s]}
                 </button>
               </li>
             );
@@ -236,10 +290,21 @@ export default function Configurator() {
       </nav>
 
       <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-        <div className="lg:col-span-7">
+        <form id="order-form" noValidate onSubmit={onSubmit} className="min-w-0 lg:col-span-7" aria-labelledby="step-title">
           {notice && (
             <div role="status" className="mb-8 rounded-[var(--radius-md)] border border-line bg-surface p-4 text-[14px] text-ink-soft">
               {notice}
+            </div>
+          )}
+
+          {showSummary && errorCount > 0 && (
+            <div
+              id="error-summary"
+              role="alert"
+              tabIndex={-1}
+              className="mb-8 rounded-[var(--radius-md)] border border-danger/40 bg-danger/5 p-4 text-[14px] text-danger outline-none"
+            >
+              {plur(locale, c.errorSummary, errorCount)}
             </div>
           )}
 
@@ -271,61 +336,72 @@ export default function Configurator() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Desktop actions */}
-          <div className="mt-12 hidden items-center justify-between border-t border-line pt-8 md:flex">
-            <button type="button" onClick={back} disabled={current === 0 || submitting} className="btn btn-ghost gap-2 disabled:invisible">
-              <ArrowLeft /> Back
+          <div className="mt-12 hidden items-center justify-between gap-4 border-t border-line pt-8 md:flex">
+            <button
+              type="button"
+              onClick={back}
+              disabled={current === 0 || submitting}
+              className="btn btn-ghost gap-2 disabled:invisible"
+            >
+              <ArrowLeft /> {c.back}
             </button>
             {isReview ? (
-              <button type="button" onClick={submit} disabled={submitting} className="btn btn-primary h-13 min-w-[220px] px-8">
+              <button type="submit" disabled={submitting} aria-busy={submitting} className="btn btn-primary h-13 min-w-[220px] px-8">
                 <Lock size={14} />
-                {submitting ? "Redirecting to Stripe…" : `Pay ${totals ? formatPrice(totals.total) : ""} securely`}
+                {submitting ? c.redirecting : fmt(c.pay, { amount: total })}
               </button>
             ) : (
-              <button type="button" onClick={next} disabled={uploading} className="btn btn-primary group h-13 px-8">
-                {uploading ? "Uploading…" : "Continue"}
-                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-0.5" />
+              <button type="submit" disabled={uploading} className="btn btn-primary group h-13 px-8">
+                {uploading ? c.uploading : c.continue}
+                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
               </button>
             )}
           </div>
-        </div>
+        </form>
 
         <aside className="hidden lg:col-span-5 lg:block">
           <div className="sticky top-[calc(var(--nav-height)+24px)]">
             <OrderSummary draft={draft} />
             <p className="mt-5 px-2 text-[13px] leading-relaxed text-muted">
-              Questions before you order? Email{" "}
-              <a href="mailto:hello@masionwebstudio.com" className="text-ink underline underline-offset-4">
-                hello@masionwebstudio.com
+              {c.questions.split("{email}")[0]}
+              <a href={`mailto:${SITE.email}`} className="text-ink underline underline-offset-4">
+                {SITE.email}
               </a>
-              .
+              {c.questions.split("{email}")[1]}
             </p>
+            <button type="button" onClick={clearSaved} className="mt-2 min-h-10 px-2 text-[13px] text-muted underline underline-offset-4 hover:text-ink">
+              {c.clearSaved}
+            </button>
           </div>
         </aside>
       </div>
 
       {/* Mobile action bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/90 backdrop-blur-xl md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/95 backdrop-blur-xl md:hidden">
         <div className="container-page flex items-center gap-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           {current > 0 && (
-            <button type="button" onClick={back} disabled={submitting} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line-strong" aria-label="Back">
+            <button
+              type="button"
+              onClick={back}
+              disabled={submitting}
+              className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line-strong"
+              aria-label={c.back}
+            >
               <ArrowLeft />
             </button>
           )}
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] text-muted">Total</p>
-            <p className="truncate font-medium tracking-[-0.02em]">
-              {totals ? formatPrice(totals.total) : "—"}
-            </p>
+            <p className="text-[12px] text-muted">{c.total}</p>
+            <p className="truncate font-medium tracking-[-0.02em]">{total}</p>
           </div>
           {isReview ? (
-            <button type="button" onClick={submit} disabled={submitting} className="btn btn-primary">
+            <button form="order-form" type="submit" disabled={submitting} aria-busy={submitting} className="btn btn-primary min-w-0 px-5">
               <Lock size={14} />
-              {submitting ? "Redirecting…" : "Pay securely"}
+              <span className="truncate">{submitting ? c.redirectingShort : c.paySecurely}</span>
             </button>
           ) : (
-            <button type="button" onClick={next} disabled={uploading} className="btn btn-primary">
-              {uploading ? "Uploading…" : "Continue"} <ArrowRight />
+            <button form="order-form" type="submit" disabled={uploading} className="btn btn-primary min-w-0 px-5">
+              <span className="truncate">{uploading ? c.uploading : c.continue}</span> <ArrowRight />
             </button>
           )}
         </div>
