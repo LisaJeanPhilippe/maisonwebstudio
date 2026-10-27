@@ -7,7 +7,11 @@ let client: Stripe | null = null;
 export function getStripe(): Stripe | null {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) return null;
-  client ??= new Stripe(key, { appInfo: { name: "Masion Web Studio" } });
+  // The fetch-based client works both on Node and on Cloudflare Workers.
+  client ??= new Stripe(key, {
+    appInfo: { name: "Masion Web Studio" },
+    httpClient: Stripe.createFetchHttpClient(),
+  });
   return client;
 }
 

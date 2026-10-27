@@ -1,20 +1,18 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { LineItem } from "@/lib/catalog";
 import type { Order } from "@/lib/order-schema";
 
 /**
- * Minimal file-based persistence for orders and uploaded assets.
- * DATA_DIR should point to durable storage in production (a mounted volume),
- * or swap these functions for a database / object store.
+ * Persistence for orders and uploaded assets.
+ *
+ * On Cloudflare, everything is stored in the R2 bucket bound as MASION_DATA:
+ *   orders/<orderId>.json
+ *   uploads/<uploadId>/<filename>  and  uploads/<uploadId>/meta.json
+ * Anywhere else (plain `next start`), the same layout is written to DATA_DIR on disk.
  */
-const DATA_DIR = process.env.DATA_DIR
-  ? path.resolve(/*turbopackIgnore: true*/ process.env.DATA_DIR)
-  : path.join(/*turbopackIgnore: true*/ process.cwd(), ".data");
-const ORDERS_DIR = path.join(DATA_DIR, "orders");
-const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
 
 export type OrderStatus = "pending_payment" | "paid" | "cancelled";
 
@@ -33,11 +31,77 @@ export type StoredOrder = {
   confirmationSentAt?: string;
 };
 
+type Blob = { key: string; body: string | ArrayBuffer; contentType: string };
+
+interface DataStore {
+  get(key: string): Promise<string | null>;
+  put(blob: Blob): Promise<void>;
+  exists(key: string): Promise<boolean>;
+}
+
+/** Minimal shape of the R2 binding we use, so this file doesn't need Workers types. */
+type R2Like = {
+  get(key: string): Promise<{ text(): Promise<string> } | null>;
+  head(key: string): Promise<unknown | null>;
+  put(key: string, value: string | ArrayBuffer, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+};
+
+function r2Store(bucket: R2Like): DataStore {
+  return {
+    async get(key) {
+      const obj = await bucket.get(key);
+      return obj ? obj.text() : null;
+    },
+    async put({ key, body, contentType }) {
+      await bucket.put(key, body, { httpMetadata: { contentType } });
+    },
+    async exists(key) {
+      return (await bucket.head(key)) !== null;
+    },
+  };
+}
+
+function diskStore(): DataStore {
+  const root = process.env.DATA_DIR
+    ? path.resolve(/*turbopackIgnore: true*/ process.env.DATA_DIR)
+    : path.join(/*turbopackIgnore: true*/ process.cwd(), ".data");
+  const file = (key: string) => path.join(root, ...key.split("/"));
+  return {
+    async get(key) {
+      try {
+        return await readFile(file(key), "utf8");
+      } catch {
+        return null;
+      }
+    },
+    async put({ key, body }) {
+      const target = file(key);
+      await mkdir(path.dirname(target), { recursive: true });
+      const tmp = `${target}.${crypto.randomUUID()}.tmp`;
+      await writeFile(tmp, typeof body === "string" ? body : Buffer.from(body));
+      await rename(tmp, target);
+    },
+    async exists(key) {
+      return (await this.get(key)) !== null;
+    },
+  };
+}
+
+function store(): DataStore {
+  try {
+    const bucket = (getCloudflareContext().env as Record<string, unknown>).MASION_DATA as R2Like | undefined;
+    if (bucket) return r2Store(bucket);
+  } catch {
+    /* not running on Cloudflare */
+  }
+  return diskStore();
+}
+
 const ID_PATTERN = /^[a-z0-9-]{8,64}$/i;
 
 export function newOrderId(): string {
   const date = new Date().toISOString().slice(2, 10).replace(/-/g, "");
-  return `msn-${date}-${randomUUID().slice(0, 8)}`;
+  return `msn-${date}-${crypto.randomUUID().slice(0, 8)}`;
 }
 
 /** Human friendly reference, e.g. MSN-251025-1A2B3C4D */
@@ -45,25 +109,21 @@ export function orderReference(id: string): string {
   return id.toUpperCase();
 }
 
-async function writeJsonAtomic(file: string, data: unknown) {
-  await mkdir(path.dirname(file), { recursive: true });
-  const tmp = `${file}.${randomUUID()}.tmp`;
-  await writeFile(tmp, JSON.stringify(data, null, 2), "utf8");
-  await rename(tmp, file);
-}
+const json = (key: string, data: unknown): Blob => ({
+  key,
+  body: JSON.stringify(data, null, 2),
+  contentType: "application/json",
+});
 
 export async function saveOrder(order: StoredOrder): Promise<void> {
   if (!ID_PATTERN.test(order.id)) throw new Error("Invalid order id");
-  await writeJsonAtomic(path.join(ORDERS_DIR, `${order.id}.json`), order);
+  await store().put(json(`orders/${order.id}.json`, order));
 }
 
 export async function getOrder(id: string): Promise<StoredOrder | null> {
   if (!ID_PATTERN.test(id)) return null;
-  try {
-    return JSON.parse(await readFile(path.join(ORDERS_DIR, `${id}.json`), "utf8")) as StoredOrder;
-  } catch {
-    return null;
-  }
+  const raw = await store().get(`orders/${id}.json`);
+  return raw ? (JSON.parse(raw) as StoredOrder) : null;
 }
 
 export async function updateOrder(
@@ -80,28 +140,25 @@ export async function updateOrder(
 export async function saveUpload(
   file: File,
 ): Promise<{ id: string; name: string; size: number; type: string }> {
-  const id = randomUUID();
+  const id = crypto.randomUUID();
   const safeName = file.name.replace(/[^\w.\- ]+/g, "_").slice(-120) || "file";
-  const dir = path.join(UPLOADS_DIR, id);
-  await mkdir(dir, { recursive: true });
-  await writeFile(path.join(dir, safeName), Buffer.from(await file.arrayBuffer()));
-  await writeJsonAtomic(path.join(dir, "meta.json"), {
-    id,
-    name: safeName,
-    originalName: file.name,
-    size: file.size,
-    type: file.type,
-    uploadedAt: new Date().toISOString(),
-  });
-  return { id, name: safeName, size: file.size, type: file.type };
+  const type = file.type || "application/octet-stream";
+  const s = store();
+  await s.put({ key: `uploads/${id}/${safeName}`, body: await file.arrayBuffer(), contentType: type });
+  await s.put(
+    json(`uploads/${id}/meta.json`, {
+      id,
+      name: safeName,
+      originalName: file.name,
+      size: file.size,
+      type,
+      uploadedAt: new Date().toISOString(),
+    }),
+  );
+  return { id, name: safeName, size: file.size, type };
 }
 
 export async function uploadExists(id: string): Promise<boolean> {
   if (!ID_PATTERN.test(id)) return false;
-  try {
-    await readFile(path.join(UPLOADS_DIR, id, "meta.json"));
-    return true;
-  } catch {
-    return false;
-  }
+  return store().exists(`uploads/${id}/meta.json`);
 }

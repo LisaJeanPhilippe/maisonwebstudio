@@ -36,8 +36,25 @@ Package → Configure (style, pages) → Add-ons → Project details → Asset u
 
 Pages beyond the package's allowance are billed automatically as "Additional pages". Add-ons already included in a package are hidden.
 
+## Deploying to Cloudflare
+
+The site runs on Cloudflare Workers through the OpenNext adapter (`@opennextjs/cloudflare`). Orders and customer uploads are stored in an R2 bucket bound as `MASION_DATA` (see `wrangler.jsonc`).
+
+1. **Plan:** use Workers Paid ($5/month). The free plan's 10 ms CPU limit per request is too low for server-rendered pages.
+2. **Storage:** in the Cloudflare dashboard, open R2 and create a bucket named `masion-web-studio-data`.
+3. **Deploy:** either
+   - connect the GitHub repo under Workers & Pages → Create → Import a repository, with build command `npx opennextjs-cloudflare build` and deploy command `npx opennextjs-cloudflare deploy`, or
+   - run `npx wrangler login` and then `npm run deploy` from this folder.
+4. **Secrets:** in the Worker, open Settings → Variables and Secrets and add `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STUDIO_NOTIFICATION_EMAIL` and, optionally, `RESEND_API_KEY` and `EMAIL_FROM`. Optionally set `NEXT_PUBLIC_SITE_URL` as a build variable.
+5. **Domain:** add your domain to Cloudflare, then in the Worker open Settings → Domains & Routes and add a custom domain.
+6. **Stripe webhook:** add an endpoint at `https://yourdomain.com/api/webhooks/stripe` for `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `checkout.session.expired`.
+
+To try the Cloudflare build locally, copy `.dev.vars.example` to `.dev.vars` and run `npm run preview`.
+
+Customer files can be downloaded from the R2 bucket in the dashboard (`uploads/<id>/`). Each order's JSON in `orders/` lists its upload IDs.
+
 ## Production notes
 
-- **Storage:** orders and uploads are written to `DATA_DIR` (default `.data/`) as files. On serverless hosts (for example Vercel) the filesystem doesn't persist, so either point `DATA_DIR` at a mounted volume or replace `src/lib/server/storage.ts` with a database and object storage such as S3, R2 or Vercel Blob.
+- **Storage:** on Cloudflare, orders and uploads go to R2. On any other Node host they're written to `DATA_DIR` (default `.data/`), which must be a persistent disk.
 - **Email:** set `RESEND_API_KEY` to send customer confirmations, and `STUDIO_NOTIFICATION_EMAIL` to get new-order alerts. Without a key, emails are logged to the console.
 - **Content:** the portfolio projects are sample or concept work and are labeled that way. Review the FAQ and terms copy before launch.

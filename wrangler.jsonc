@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "masion-web-studio",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true },
+  "r2_buckets": [
+    {
+      // Orders and customer uploads. Create it once with:
+      //   npx wrangler r2 bucket create masion-web-studio-data
+      "binding": "MASION_DATA",
+      "bucket_name": "masion-web-studio-data"
+    }
+  ]
+  // Secrets (set with `npx wrangler secret put NAME` or in the dashboard):
+  //   STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY,
+  //   EMAIL_FROM, STUDIO_NOTIFICATION_EMAIL
+}
