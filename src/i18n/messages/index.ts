@@ -5,15 +5,15 @@ export type { Messages };
 
 const loaders: Record<Locale, () => Promise<{ default: Messages }>> = {
   en: () => import("./en"),
-  zh: () => import("./en"),
-  es: () => import("./en"),
-  hi: () => import("./en"),
-  ar: () => import("./en"),
-  fr: () => import("./en"),
-  bn: () => import("./en"),
-  pt: () => import("./en"),
-  ru: () => import("./en"),
-  id: () => import("./en"),
+  zh: () => import("./zh"),
+  es: () => import("./es"),
+  hi: () => import("./hi"),
+  ar: () => import("./ar"),
+  fr: () => import("./fr"),
+  bn: () => import("./bn"),
+  pt: () => import("./pt"),
+  ru: () => import("./ru"),
+  id: () => import("./id"),
 };
 
 export async function getMessages(locale: Locale): Promise<Messages> {

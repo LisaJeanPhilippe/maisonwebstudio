@@ -1,60 +1,61 @@
 # Masion Web Studio
 
-Marketing site and online ordering flow for Masion Web Studio, built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Motion and Stripe Checkout.
+Marketing site and online ordering flow for Masion Web Studio: portfolio, services, fixed-price packages, a 6-step configurator with mandatory content upload, and full payment through Stripe Checkout. Built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4 and Motion, and deployed to Cloudflare Workers through OpenNext.
+
+The site is available in 10 languages (English, 简体中文, Español, हिन्दी, العربية with right-to-left layout, Français, বাংলা, Português, Русский, Bahasa Indonesia). Legal and contractual documents are English-only until professionally translated (see `docs/TRANSLATION_REVIEW.md`).
 
 ## Getting started
 
 ```bash
-cp .env.example .env.local   # add your Stripe test keys
+cp .env.example .env.local   # add Stripe TEST keys
 npm install
 npm run dev                  # http://localhost:3000
 ```
 
-For local webhooks, run `stripe listen --forward-to localhost:3000/api/webhooks/stripe` and copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
+For local webhooks: `stripe listen --forward-to localhost:3000/api/webhooks/stripe` and copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
 
-Scripts: `npm run dev`, `npm run build`, `npm start`, `npm run lint`, `npx tsc --noEmit`.
+## Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` / `npm start` | Production build / server (Node) |
+| `npm run typecheck`, `npm run lint` | TypeScript and ESLint |
+| `npm test` | All automated tests (needs `npm run build` first) |
+| `npm run test:unit` | Pricing, validation, translations completeness, data retention |
+| `npm run test:integration` | Checkout, upload and Stripe webhook APIs (local, signed test events — never contacts Stripe or charges anything) |
+| `npm run test:e2e` | Browser tests: every page × 10 languages, order flow, axe WCAG 2.2 AA scans, responsive overflow at 320–1920px, language switching, broken links, headers |
+| `npm run check` | typecheck + lint + build + all tests |
+| `npm run preview` | Build for Cloudflare and run locally in the Workers runtime |
+| `npm run deploy` | Build and deploy to Cloudflare |
+
+To run the browser tests against another server (e.g. `npm run preview` or staging): `E2E_BASE_URL=http://127.0.0.1:8787 npm run test:e2e`.
 
 ## Structure
 
 | Path | Purpose |
 | --- | --- |
-| `src/app/(site)/` | Marketing pages: home, work, work/[slug], services, pricing, process, about, terms, start (configurator), checkout/success |
-| `src/app/demo/[slug]` | Full-screen, interactive versions of the sample client sites |
-| `src/app/api/checkout` | Validates the order, recomputes pricing on the server, saves the order and creates a Stripe Checkout Session |
-| `src/app/api/uploads` | Accepts asset uploads (15 MB max each, allow-listed file types) |
-| `src/app/api/webhooks/stripe` | Verifies signatures and marks orders paid; sends confirmation emails |
-| `src/lib/catalog.ts` | Packages, add-ons, comparison matrix and pricing logic (one source of truth) |
-| `src/lib/order-schema.ts` | Zod schemas shared by the client steps and the API |
-| `src/lib/projects.ts` | Portfolio content |
-| `src/components/demos/` | The five sample client websites (container-query responsive, so they render as desktop or mobile inside device frames) |
-| `src/components/start/` | The 6-step configurator |
-| `src/app/globals.css` | Design tokens: color, type, radius, shadow, motion, buttons, cards, inputs |
+| `src/app/[lang]/` | All pages, per language. English is served without a prefix (`/pricing`), other languages with one (`/ar/pricing`) |
+| `src/app/api/checkout` | Validates the order, recomputes prices from the catalog, stores the order and creates the Stripe Checkout Session |
+| `src/app/api/uploads` | Asset uploads: size/type allow-list, file-signature check, rate limiting |
+| `src/app/api/webhooks/stripe` | Signature-verified, idempotent payment/refund handling — the only place an order becomes "paid" |
+| `src/i18n/` | Locale config, formatting, dictionaries (`messages/*.ts`) |
+| `src/content/legal/` | Privacy, Terms, Cookies, Payment Agreement, Accessibility Statement (English drafts) |
+| `src/lib/catalog.ts` | Packages, add-ons and pricing — single source of truth |
+| `src/lib/server/` | Storage (R2 or disk), Stripe, email, request guards, fulfillment |
+| `cloudflare/` | Worker entry (HTTPS redirect, daily retention job) |
+| `tests/` | Playwright Test: `unit/`, `integration/`, `e2e/` |
+| `docs/` | Deployment, operations & backups, security, privacy data map, accessibility and translation review |
 
 ## Ordering flow
 
-Package → Configure (style, pages) → Add-ons → Project details → Asset upload → Review & pay (always in full; the customer must accept the payment agreement, which says all payments are final) → Stripe Checkout → `/checkout/success`, which verifies the session with Stripe and shows the confirmation. Progress is saved in `localStorage`, so a refresh or a cancelled payment doesn't lose anything.
+Package → Configure → Add-ons → Project details → Upload content (at least one file required) → Review & pay. The customer must accept the payment agreement (all payments final and non-refundable) and the Terms. Payment is always in full via Stripe Checkout. The success page only *reads* order status; the Stripe webhook is what marks an order paid, after checking the amount and currency. Progress is kept in `sessionStorage` for the current tab only.
 
-Pages beyond the package's allowance are billed automatically as "Additional pages". Add-ons already included in a package are hidden.
+## Documentation
 
-## Deploying to Cloudflare
-
-The site runs on Cloudflare Workers through the OpenNext adapter (`@opennextjs/cloudflare`). Orders and customer uploads are stored in an R2 bucket bound as `MASION_DATA` (see `wrangler.jsonc`).
-
-1. **Plan:** use Workers Paid ($5/month). The free plan's 10 ms CPU limit per request is too low for server-rendered pages.
-2. **Storage:** in the Cloudflare dashboard, open R2 and create a bucket named `masion-web-studio-data`.
-3. **Deploy:** either
-   - connect the GitHub repo under Workers & Pages → Create → Import a repository, with build command `npx opennextjs-cloudflare build` and deploy command `npx opennextjs-cloudflare deploy`, or
-   - run `npx wrangler login` and then `npm run deploy` from this folder.
-4. **Secrets:** in the Worker, open Settings → Variables and Secrets and add `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STUDIO_NOTIFICATION_EMAIL` and, optionally, `RESEND_API_KEY` and `EMAIL_FROM`. Optionally set `NEXT_PUBLIC_SITE_URL` as a build variable.
-5. **Domain:** add your domain to Cloudflare, then in the Worker open Settings → Domains & Routes and add a custom domain.
-6. **Stripe webhook:** add an endpoint at `https://yourdomain.com/api/webhooks/stripe` for `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `checkout.session.expired`.
-
-To try the Cloudflare build locally, copy `.dev.vars.example` to `.dev.vars` and run `npm run preview`.
-
-Customer files can be downloaded from the R2 bucket in the dashboard (`uploads/<id>/`). Each order's JSON in `orders/` lists its upload IDs.
-
-## Production notes
-
-- **Storage:** on Cloudflare, orders and uploads go to R2. On any other Node host they're written to `DATA_DIR` (default `.data/`), which must be a persistent disk.
-- **Email:** set `RESEND_API_KEY` to send customer confirmations, and `STUDIO_NOTIFICATION_EMAIL` to get new-order alerts. Without a key, emails are logged to the console.
-- **Content:** the portfolio projects are sample or concept work and are labeled that way. Review the FAQ and terms copy before launch.
+- [Deployment](docs/DEPLOYMENT.md) — Cloudflare, secrets, Stripe, domain, post-deploy checks
+- [Operations & backups](docs/OPERATIONS.md) — orders, refunds, retention, backups, incidents
+- [Security notes](docs/SECURITY.md)
+- [Privacy data map](docs/PRIVACY_DATA_MAP.md)
+- [Accessibility testing](docs/ACCESSIBILITY_TESTING.md)
+- [Translation review](docs/TRANSLATION_REVIEW.md)

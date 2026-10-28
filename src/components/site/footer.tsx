@@ -91,9 +91,12 @@ export function Footer({ locale, m }: { locale: Locale; m: Messages }) {
         </div>
 
         <div className="mt-16 flex items-end justify-between gap-6 overflow-hidden" aria-hidden>
-          <p className="select-none text-[clamp(4rem,17vw,15rem)] font-medium leading-[0.8] tracking-[-0.06em] text-ink/[0.06]" dir="ltr">
-            Masion
-          </p>
+          {/* Decorative watermark drawn as SVG, so it isn't treated as low-contrast text. */}
+          <svg viewBox="0 0 600 132" className="w-[min(100%,60rem)] select-none fill-ink/[0.06]" focusable="false">
+            <text x="0" y="122" fontSize="170" fontWeight="500" textLength="600" lengthAdjust="spacingAndGlyphs" direction="ltr">
+              Masion
+            </text>
+          </svg>
           <LogoMark className="mb-2 hidden h-10 w-10 shrink-0 text-ink md:block" />
         </div>
 

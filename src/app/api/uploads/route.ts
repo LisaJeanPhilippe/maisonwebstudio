@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ACCEPTED_EXTENSIONS, MAX_UPLOAD_BYTES } from "@/lib/uploads";
+import { ACCEPTED_EXTENSIONS, MAX_UPLOAD_BYTES, MIME_TYPES } from "@/lib/uploads";
 import { contentMatchesExtension } from "@/lib/server/file-check";
 import { clientIp, isSameOrigin, jsonError, rateLimit } from "@/lib/server/request-guards";
 import { saveUpload } from "@/lib/server/storage";
@@ -28,11 +28,12 @@ export async function POST(request: Request) {
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
   if (!(ACCEPTED_EXTENSIONS as readonly string[]).includes(ext)) return jsonError(415, "type");
-  const head = new Uint8Array(await file.slice(0, 1024).arrayBuffer());
+  // SVG is text that can hide scripts anywhere, so it is checked in full.
+  const head = new Uint8Array(await (ext === "svg" ? file : file.slice(0, 1024)).arrayBuffer());
   if (!contentMatchesExtension(ext, head)) return jsonError(415, "type");
 
   try {
-    const saved = await saveUpload(file);
+    const saved = await saveUpload(file, MIME_TYPES[ext as keyof typeof MIME_TYPES]);
     return NextResponse.json(saved, { status: 201, headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     console.error("[uploads] Failed to store file:", err instanceof Error ? err.message : "unknown");

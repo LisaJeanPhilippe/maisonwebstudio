@@ -29,7 +29,7 @@ export default async function ProcessPage({ params }: PageProps<"/[lang]/process
           {m.process.steps.map((step, i) => (
             <li key={step.title} className="border-t border-line">
               <Reveal delay={i * 0.04} className="grid gap-6 py-12 md:grid-cols-12 md:gap-8 md:py-16">
-                <span aria-hidden className="text-[clamp(3rem,2rem+4vw,6rem)] font-medium leading-none tracking-[-0.06em] text-ink/15 md:col-span-3">
+                <span aria-hidden className="text-[clamp(3rem,2rem+4vw,6rem)] font-medium leading-none tracking-[-0.06em] text-control md:col-span-3">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="md:col-span-4">

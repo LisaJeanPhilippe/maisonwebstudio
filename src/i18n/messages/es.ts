@@ -1,0 +1,833 @@
+import { plural } from "../format";
+import type { Messages } from "./en";
+
+// Spanish — machine-assisted draft. Requires native-speaker review (docs/TRANSLATION_REVIEW.md).
+const es: Messages = {
+  meta: {
+    siteName: "Masion Web Studio",
+    home: {
+      title: "Masion Web Studio — Sitios web a medida para negocios en crecimiento",
+      description:
+        "Sitios web modernos y orientados a la conversión para pequeñas empresas. Precios fijos desde $499, un proceso claro y lanzamiento en tan solo 7–10 días.",
+    },
+    work: {
+      title: "Trabajo seleccionado — Sitios web de muestra",
+      description:
+        "Explora sitios web de muestra diseñados por Masion Web Studio para negocios de belleza, restaurantes, bienestar, diseño de interiores y servicios profesionales.",
+    },
+    services: {
+      title: "Servicios — Diseño web, comercio electrónico y rediseños",
+      description:
+        "Diseño web, tiendas en línea, rediseños, páginas de aterrizaje y estrategia web, además de extras como redacción, SEO y entrega urgente.",
+    },
+    pricing: {
+      title: "Precios — Paquetes de sitio web desde $499",
+      description:
+        "Compara los paquetes Starter ($499), Business ($899) y Premium ($1,499). Precio único, pagado en su totalidad al finalizar la compra.",
+    },
+    process: {
+      title: "Proceso — Del pedido al lanzamiento en cinco pasos",
+      description:
+        "Cómo Masion Web Studio lleva tu sitio web del pedido al lanzamiento: configuración, llamada inicial, diseño, desarrollo y ajustes, y lanzamiento.",
+    },
+    about: {
+      title: "Sobre el estudio",
+      description:
+        "Masion Web Studio une el oficio de un estudio de diseño editorial con la claridad de un producto moderno: paquetes fijos, precios transparentes y un proceso definido.",
+    },
+    start: {
+      title: "Empieza tu sitio web — Configura y haz tu pedido",
+      description:
+        "Elige un paquete, añade extras, comparte los detalles de tu proyecto y los recursos de tu marca, y paga de forma segura con Stripe.",
+    },
+    project: { title: "{name} — Sitio web de muestra de {industry}" },
+    demo: { title: "{name} — Demostración en vivo" },
+    success: { title: "Confirmación del pedido" },
+    notFound: { title: "Página no encontrada" },
+    privacy: { title: "Política de privacidad", description: "Cómo Masion Web Studio recopila, usa y protege tu información personal." },
+    terms: { title: "Términos y condiciones", description: "Los términos que se aplican al usar este sitio y al comprar un proyecto web a Masion Web Studio." },
+    cookies: { title: "Política de cookies", description: "Las cookies y el almacenamiento del navegador que usa este sitio, y por qué." },
+    payment: { title: "Política de pagos y reembolsos", description: "Pago completo al finalizar la compra y nuestra política de pagos definitivos." },
+    accessibility: { title: "Declaración de accesibilidad", description: "Nuestro compromiso con un sitio accesible, limitaciones conocidas y cómo informar de una barrera." },
+  },
+
+  common: {
+    skipToContent: "Saltar al contenido principal",
+    startYourWebsite: "Empieza tu sitio web",
+    startHint: "Unos 10 minutos · Solo pagas en el último paso",
+    viewOurWork: "Ver nuestro trabajo",
+    viewProject: "Ver proyecto",
+    openLiveDemo: "Abrir demostración",
+    allWork: "Todo el trabajo",
+    backToHome: "Volver al inicio",
+    comparePackages: "Comparar paquetes",
+    oneTime: "pago único",
+    mostChosen: "El más elegido",
+    optional: "(opcional)",
+    sampleProject: "Proyecto de muestra",
+    opensInNewTab: "(se abre en una pestaña nueva)",
+    loading: "Cargando…",
+  },
+
+  nav: {
+    label: "Principal",
+    work: "Trabajo",
+    services: "Servicios",
+    pricing: "Precios",
+    process: "Proceso",
+    about: "Nosotros",
+    openMenu: "Abrir menú",
+    closeMenu: "Cerrar menú",
+    home: "Masion Web Studio — inicio",
+  },
+
+  language: { label: "Idioma", button: "Idioma: {name}", listLabel: "Elige un idioma" },
+
+  footer: {
+    tagline: "Sitios web atractivos para negocios listos para crecer.",
+    startLink: "Empieza tu sitio web",
+    studio: "Estudio",
+    start: "Empezar",
+    contact: "Contacto",
+    legal: "Legal",
+    nav: "Pie de página",
+    links: {
+      work: "Trabajo seleccionado",
+      services: "Servicios",
+      process: "Proceso",
+      about: "Nosotros",
+      pricing: "Precios",
+      compare: "Comparar paquetes",
+      configure: "Configura tu sitio web",
+      faq: "Preguntas frecuentes",
+      privacy: "Política de privacidad",
+      terms: "Términos y condiciones",
+      cookies: "Política de cookies",
+      payment: "Pagos y reembolsos",
+      accessibility: "Accesibilidad",
+    },
+    hours: "Lun–vie, 9:00–18:00 (hora del Este de EE. UU.)",
+    location: "Remoto · Todo el mundo",
+    rights: "© {year} Masion Web Studio. Todos los derechos reservados.",
+    slogan: "Sitios web profesionales sin los dolores de cabeza de una agencia.",
+  },
+
+  hero: {
+    eyebrow: "Masion Web Studio — Aceptando nuevos proyectos",
+    headline: "Sitios web diseñados para impulsar tu negocio.",
+    lede:
+      "Masion Web Studio crea sitios web modernos y orientados a la conversión para negocios que quieren verse tan profesionales en línea como en la vida real.",
+    showcaseLabel: "Sitios web de muestra diseñados por Masion Web Studio, en un portátil y un teléfono",
+    trust: [
+      { k: "Desde $499", v: "Precios claros y fijos, sin sorpresas" },
+      { k: "7–10 días", v: "Lanzamiento típico de un sitio Starter" },
+      { k: "Es tuyo", v: "Tu dominio, tu contenido, tu sitio" },
+    ],
+  },
+
+  home: {
+    industriesLabel: "Sectores con los que trabajamos",
+    industries: [
+      "Marcas de cosmética",
+      "Restaurantes",
+      "Diseñadores de interiores",
+      "Estudios de bienestar",
+      "Despachos de abogados y contables",
+      "Boutiques",
+      "Salones y spas",
+      "Consultores",
+      "Inmobiliarias",
+      "Cafeterías",
+    ],
+    pauseAnimation: "Pausar animación",
+    playAnimation: "Reanudar animación",
+    work: {
+      eyebrow: "Trabajo seleccionado",
+      title: "Sitios con personalidad propia.",
+      description:
+        "Una selección de sitios web de muestra para belleza, hostelería, bienestar y servicios profesionales, cada uno diseñado desde cero.",
+    },
+    services: { eyebrow: "Servicios", title: "Todo lo que tu sitio necesita. Nada que no.", cta: "Nuestros servicios" },
+    why: {
+      eyebrow: "Por qué Masion",
+      title: "Sitios web profesionales sin los dolores de cabeza de una agencia.",
+      lede: "El oficio de un estudio de diseño con la claridad de un producto que puedes comprar en línea.",
+      items: [
+        { t: "Precios fijos y transparentes", d: "Sabes exactamente lo que pagas antes de empezar. Sin facturación por horas ni facturas sorpresa." },
+        { t: "Diseñado, no plantillas", d: "Cada sitio se diseña para tu negocio, con tipografía, maquetación y detalles incluidos." },
+        { t: "Hecho para convertir", d: "Llamadas a la acción claras, páginas rápidas y bases de SEO que ayudan a que los clientes te encuentren y te elijan." },
+        { t: "Un solo equipo responsable", d: "Estrategia, diseño y desarrollo bajo un mismo techo, con un único punto de contacto." },
+      ],
+    },
+    pricing: {
+      eyebrow: "Precios",
+      title: "Paquetes sencillos. Resultados claros.",
+      description: "Precio único con todo lo necesario para lanzar, pagado en su totalidad al finalizar la compra.",
+      custom: "¿Necesitas algo más? Añade redacción, una tienda en línea o entrega urgente al configurar tu sitio web.",
+    },
+    process: { eyebrow: "Proceso", title: "Del primer clic al lanzamiento, en cinco pasos claros.", cta: "Cómo funciona" },
+    faq: { eyebrow: "Preguntas", title: "Bueno saberlo." },
+  },
+
+  work: {
+    eyebrow: "Trabajo seleccionado",
+    title: "Cada negocio merece su propio estilo.",
+    lede:
+      "Explora sitios web de muestra que hemos diseñado para distintos sectores. Abre cualquier proyecto para ver el caso completo y una versión interactiva del sitio.",
+    filterLabel: "Filtrar proyectos por categoría",
+    showing: plural({ one: "Mostrando {count} proyecto", other: "Mostrando {count} proyectos" }),
+    ctaTitle: "¿Te gusta lo que ves? Diseñemos el tuyo.",
+    categories: {
+      All: "Todos",
+      Beauty: "Belleza",
+      Restaurant: "Restaurantes",
+      "Professional Services": "Servicios profesionales",
+      "E-Commerce": "Comercio electrónico",
+      "Local Business": "Negocio local",
+    },
+  },
+
+  projects: {
+    "aurelia-skin": {
+      industry: "Belleza / Comercio electrónico",
+      summary: "Una tienda suave y editorial para una línea de cuidado de la piel clínica y delicada.",
+      description:
+        "Aurelia necesitaba una tienda tan cuidada como sus fórmulas. Diseñamos una experiencia de compra editorial con una presentación táctil de los productos, un test de piel guiado y un proceso de pago pensado para compras recurrentes.",
+      challenge: "Su tema anterior se parecía al de cualquier otra marca de cosmética y escondía los más vendidos a tres clics de distancia.",
+      approach:
+        "Empezamos con un único ritual, dimos espacio a cada producto y planteamos la promoción en torno a los ingredientes en lugar de los descuentos.",
+      features: ["Tienda Shopify", "Test de piel", "Suscripciones", "Reseñas", "Captación de correos"],
+      highlights: [
+        { value: "3 pasos", label: "Test de piel guiado" },
+        { value: "1 toque", label: "Del producto a la bolsa" },
+        { value: "< 1,5 s", label: "Objetivo de tiempo de carga" },
+      ],
+    },
+    "maison-noir": {
+      industry: "Restaurante",
+      summary: "Un sitio nocturno a la luz de las velas, con las reservas en primer plano.",
+      description:
+        "Un íntimo comedor francés merecía un sitio que creara ambiente antes de que llegaran los comensales. Creamos una experiencia oscura y cinematográfica con reservas siempre visibles y una carta que se actualiza en minutos.",
+      challenge: "Las reservas se hacían por teléfono y la carta era un PDF que siempre estaba desactualizado.",
+      approach:
+        "Un widget de reservas en la portada, una carta de temporada editable y las consultas de eventos privados enviadas directamente al equipo de eventos.",
+      features: ["Reservas", "Carta editable", "Consultas de eventos privados", "Tarjetas regalo", "Google Maps"],
+      highlights: [
+        { value: "Portada", label: "Ubicación del widget de reservas" },
+        { value: "Minutos", label: "Para actualizar la carta de temporada" },
+        { value: "Oscura", label: "Paleta cinematográfica y nocturna" },
+      ],
+    },
+    "form-studio": {
+      industry: "Diseño de interiores",
+      summary: "Un portafolio sereno y arquitectónico que deja hablar a los espacios.",
+      description:
+        "El trabajo de Form Studio gira en torno a la proporción y la contención, y el sitio también. Una retícula modular, un índice de proyectos y casos de estudio guiados por la imagen que convierten cada encargo en un reportaje de revista.",
+      challenge: "Proyectos preciosos, pero una galería recargada que hacía que todos los espacios parecieran iguales.",
+      approach:
+        "Creamos un sistema de retícula flexible y un listado indexado de proyectos, dando a cada uno su propio ritmo de imagen y texto.",
+      features: ["Índice de proyectos", "Plantillas de casos de estudio", "Blog", "Formulario de contacto", "CMS"],
+      highlights: [
+        { value: "12", label: "Plantillas de página" },
+        { value: "Modular", label: "Sistema de retícula de imágenes" },
+        { value: "Indexado", label: "Archivo de proyectos" },
+      ],
+    },
+    solace: {
+      industry: "Bienestar",
+      summary: "Una experiencia de reserva tranquila y amable para un estudio de yoga y respiración.",
+      description:
+        "Solace quería un sitio que transmitiera la sensación de entrar en el estudio. Formas suaves, una paleta delicada y un horario de clases que hace que reservar la primera visita sea fácil desde cualquier teléfono.",
+      challenge: "La mayoría de visitantes llegaban desde el móvil y abandonaban dentro de un horario externo poco práctico.",
+      approach:
+        "Un horario con sensación nativa, una oferta de bienvenida clara y reservas integradas directamente en el sistema de diseño.",
+      features: ["Horario de clases", "Integración de reservas", "Embudo de oferta de bienvenida", "Membresías", "Boletín"],
+      highlights: [
+        { value: "Móvil", label: "Enfoque de diseño prioritario" },
+        { value: "2 toques", label: "Para reservar una clase" },
+        { value: "Integrado", label: "Embudo de oferta de bienvenida" },
+      ],
+    },
+    "mason-and-co": {
+      industry: "Servicios profesionales",
+      summary: "Una presencia segura y fiable para una firma de asesoría con varias generaciones.",
+      description:
+        "Tras 35 años de recomendaciones, Mason & Co. necesitaba un sitio a la altura de su reputación. Creamos un diseño editorial y mesurado con áreas de práctica claras y una reserva de consultas sin fricción.",
+      challenge: "Un sitio anticuado que no reflejaba décadas de experiencia y apenas generaba contactos.",
+      approach:
+        "Empezar por la credibilidad —datos, personas reales y páginas de servicios en lenguaje claro— y que reservar una consulta esté a un clic desde cualquier lugar.",
+      features: ["Reserva de consultas", "Páginas de áreas de práctica", "Perfiles del equipo", "Blog de análisis", "Analítica"],
+      highlights: [
+        { value: "7", label: "Páginas" },
+        { value: "1 clic", label: "Para reservar una consulta" },
+        { value: "Editorial", label: "Blog de análisis" },
+      ],
+    },
+  },
+
+  caseStudy: {
+    eyebrow: "{industry} · Proyecto de muestra",
+    industry: "Sector",
+    package: "Paquete",
+    typefaces: "Tipografías",
+    scope: "Alcance",
+    palette: "Paleta",
+    brief: "El encargo",
+    approach: "Nuestro enfoque",
+    next: "Siguiente proyecto",
+    ctaTitle: "¿Quieres un sitio como {name}?",
+    ctaBody: "Este proyecto encaja con nuestro paquete {package}. Configura el tuyo en minutos y nosotros nos encargamos del resto.",
+    previewLabel: "Vista previa del sitio web de muestra {name}",
+    phonePreviewLabel: "El sitio web de muestra {name} en un teléfono",
+  },
+
+  demo: {
+    notice: "Sitio de muestra de Masion Web Studio",
+    caseStudy: "Caso de estudio",
+    startYours: "Empieza el tuyo",
+    toolbar: "Controles del sitio de muestra",
+  },
+
+  services: {
+    page: {
+      eyebrow: "Servicios",
+      title: "Diseño y tecnología, en equilibrio.",
+      lede:
+        "Desde un sitio de tres páginas hasta una tienda en línea completa, cada proyecto recibe el mismo cuidado: estrategia meditada, diseño refinado y un desarrollo rápido y fiable.",
+    },
+    list: [
+      {
+        title: "Diseño web",
+        description: "Sitios web a medida, pensados primero para móvil, diseñados en torno a tu marca y creados para convertir visitantes en clientes.",
+        points: ["Sistema de diseño a medida", "Desarrollo adaptable", "Orientación sobre textos y contenidos"],
+      },
+      {
+        title: "Comercio electrónico",
+        description: "Tiendas atractivas con páginas de producto cuidadas, un pago sencillo y las integraciones que necesitas para vender.",
+        points: ["Catálogo de productos", "Pago seguro", "Configuración de inventario y envíos"],
+      },
+      {
+        title: "Rediseño web",
+        description: "Una reconstrucción moderna del sitio que se te ha quedado pequeño: conservamos lo que funciona, arreglamos lo que no y protegemos tu SEO.",
+        points: ["Auditoría de contenidos", "Migración segura para el SEO", "Mejora de rendimiento"],
+      },
+      {
+        title: "Páginas de aterrizaje",
+        description: "Páginas rápidas y enfocadas para lanzamientos, campañas y ofertas, diseñadas en torno a una única acción clara.",
+        points: ["Listas para campañas", "Preparadas para pruebas A/B", "Analítica integrada"],
+      },
+      {
+        title: "Estrategia web",
+        description: "Posicionamiento, estructura y mensajes, para que cada página tenga una función y cada visitante sepa qué hacer después.",
+        points: ["Mapa del sitio y recorridos de usuario", "Marco de mensajes", "Revisión de conversión"],
+      },
+    ],
+    addOns: {
+      eyebrow: "Extras",
+      title: "Adapta cualquier paquete.",
+      lede: "Añade exactamente lo que necesitas al configurar tu sitio.",
+      perPage: "/ página",
+    },
+  },
+
+  process: {
+    page: {
+      eyebrow: "Proceso",
+      title: "Tranquilo, claro y puntual.",
+      lede:
+        "Sin reuniones interminables ni plazos imprecisos. Un proceso sencillo con pasos definidos, progreso compartido y una fecha de lanzamiento con la que puedes planificar.",
+    },
+    steps: [
+      {
+        title: "Configura y pide",
+        duration: "10 minutos",
+        description:
+          "Elige un paquete, añade lo que necesites y cuéntanos sobre tu negocio. Sube tu logotipo, tus fotos y cualquier cosa que te inspire.",
+      },
+      {
+        title: "Llamada inicial",
+        duration: "Día 1–2",
+        description:
+          "Una llamada de 30 minutos para alinear objetivos, público y estilo. Compartiremos un tablero de proyecto sencillo con tu calendario.",
+      },
+      {
+        title: "Diseño",
+        duration: "Semana 1–2",
+        description:
+          "Primero diseñamos tu página de inicio, la ajustamos juntos y luego extendemos el sistema a todas las páginas, en escritorio y móvil.",
+      },
+      {
+        title: "Desarrollo y ajustes",
+        duration: "Semana 2–3",
+        description:
+          "Tu sitio se desarrolla, se optimiza y se prueba en distintos dispositivos. Todos los paquetes incluyen rondas de revisión.",
+      },
+      {
+        title: "Lanzamiento",
+        duration: "Día del lanzamiento",
+        description:
+          "Conectamos tu dominio, configuramos SSL, analítica y lo esencial de SEO, y te enseñamos a actualizar tu sitio.",
+      },
+    ],
+    extras: [
+      { t: "Tablero de proyecto compartido", d: "Ve cada tarea, archivo y aprobación en un solo lugar, sin buscar entre hilos de correo." },
+      { t: "Novedades semanales", d: "Un breve resumen escrito cada semana, para que siempre sepas qué viene después." },
+      { t: "Después del lanzamiento", d: "Un recorrido por tu sitio, además de planes de mantenimiento opcionales para actualizaciones y tranquilidad." },
+    ],
+  },
+
+  about: {
+    eyebrow: "Nosotros",
+    title: "Un estudio creativo que piensa como una empresa tecnológica.",
+    intro:
+      "Masion Web Studio nació de una idea sencilla: un gran diseño no debería requerir una cuota mensual de agencia, y comprar un sitio web no debería ser una apuesta.",
+    p1:
+      "Combinamos el oficio de un estudio de diseño editorial con la claridad de un producto moderno. Paquetes fijos, precios transparentes y un proceso definido significan que sabes qué recibes, cuándo lo recibes y cuánto cuesta, antes de empezar.",
+    p2:
+      "Trabajamos con fundadores, restaurantes, estudios, despachos y marcas a los que les importa cómo se les ve. Nuestro trabajo es que tu negocio se vea en línea tan bien como en la vida real, y que a los clientes adecuados les resulte fácil decir que sí.",
+    valuesEyebrow: "Lo que valoramos",
+    valuesTitle: "Discretamente excepcional.",
+    values: [
+      { t: "Contención", d: "Quitamos hasta que solo queda lo importante. El buen diseño es sereno, claro y seguro." },
+      { t: "Oficio", d: "La tipografía, el espaciado y el movimiento se ajustan a mano. Los detalles hacen que un sitio se sienta premium." },
+      { t: "Claridad", d: "Lenguaje sencillo, precios fijos y plazos honestos. Siempre sabrás en qué punto está todo." },
+      { t: "Colaboración", d: "Tu negocio, tus objetivos. Diseñamos para tus clientes, no para premios." },
+    ],
+    showcaseLabel: "El sitio web de muestra de Form Studio en una ventana del navegador",
+  },
+
+  pricing: {
+    eyebrow: "Precios",
+    title: "Diseño premium, precios honestos.",
+    lede: "Tres paquetes, precio único. Todos los proyectos se pagan en su totalidad al finalizar la compra, y todos los pagos son definitivos.",
+    timeline: "Plazo habitual: {timeline}",
+    choose: "Elegir {name}",
+    chooseShort: "Elegir",
+    compareEyebrow: "Comparar",
+    compareTitle: "Compara los paquetes.",
+    compareCaption: "Funciones incluidas en cada paquete de sitio web",
+    feature: "Función",
+    included: "Incluido",
+    notIncluded: "No incluido",
+    faqEyebrow: "Preguntas frecuentes",
+    faqTitle: "Preguntas, respondidas.",
+    paymentNote: "Pago completo al finalizar la compra. Todos los pagos son definitivos: consulta nuestra {link}.",
+    paymentLink: "Política de pagos y reembolsos",
+  },
+
+  packages: {
+    starter: {
+      name: "Sitio web Starter",
+      short: "Starter",
+      tagline: "Una presencia profesional y cuidada para negocios nuevos y en crecimiento.",
+      timeline: "7–10 días",
+      rushTimeline: "4–6 días",
+      features: [
+        "Hasta 3 páginas",
+        "Diseño a medida",
+        "Adaptado a móviles",
+        "Formulario de contacto",
+        "Enlaces a redes sociales",
+        "SEO básico",
+        "Configuración de SSL y seguridad",
+        "Una ronda de revisión",
+        "Ayuda con el lanzamiento",
+      ],
+    },
+    business: {
+      name: "Sitio web Business",
+      short: "Business",
+      tagline: "Todo lo que un negocio consolidado necesita para atraer y convertir.",
+      timeline: "2–3 semanas",
+      rushTimeline: "8–12 días",
+      features: [
+        "Hasta 7 páginas",
+        "Diseño a medida",
+        "Adaptado a móviles",
+        "Formularios de contacto",
+        "Galería",
+        "Google Maps",
+        "Integración con redes sociales",
+        "SEO",
+        "Analítica",
+        "Integración de reservas",
+        "Dos rondas de revisión",
+        "Ayuda con el lanzamiento",
+      ],
+    },
+    premium: {
+      name: "Sitio web Premium",
+      short: "Premium",
+      tagline: "Un sitio de calidad editorial, pensado al detalle, para marcas que lideran.",
+      timeline: "3–4 semanas",
+      rushTimeline: "12–16 días",
+      features: [
+        "Hasta 12 páginas",
+        "Diseño premium",
+        "Secciones avanzadas",
+        "Animaciones",
+        "Formularios",
+        "Galerías",
+        "Reservas",
+        "Integración de boletín",
+        "SEO",
+        "Analítica",
+        "Configuración de blog",
+        "Tres rondas de revisión",
+        "Soporte prioritario",
+      ],
+    },
+  },
+
+  compare: {
+    labels: {
+      pages: "Páginas incluidas",
+      design: "Diseño",
+      revisions: "Rondas de revisión",
+      timeline: "Plazo habitual",
+      mobile: "Adaptado a móviles",
+      forms: "Formularios de contacto",
+      ssl: "Configuración de SSL y seguridad",
+      seo: "SEO",
+      gallery: "Galería",
+      maps: "Google Maps",
+      analytics: "Analítica",
+      booking: "Integración de reservas",
+      advanced: "Secciones avanzadas y animación",
+      newsletter: "Integración de boletín",
+      blog: "Configuración de blog",
+      priority: "Soporte prioritario",
+      launch: "Ayuda con el lanzamiento",
+    },
+    values: {
+      upTo3: "Hasta 3",
+      upTo7: "Hasta 7",
+      upTo12: "Hasta 12",
+      custom: "A medida",
+      premium: "Premium",
+      basic: "Básico",
+      standard: "Estándar",
+      one: "1",
+      two: "2",
+      three: "3",
+    },
+  },
+
+  addOns: {
+    "extra-pages": { name: "Páginas adicionales", description: "Amplía tu sitio más allá de las páginas incluidas en tu paquete." },
+    copywriting: { name: "Redacción profesional", description: "Textos claros y persuasivos para cada página, con la voz de tu marca." },
+    logo: { name: "Logotipo y renovación de marca", description: "Un logotipo refinado, una paleta de color y una combinación tipográfica para tu negocio." },
+    ecommerce: { name: "Tienda en línea", description: "Catálogo, carrito y pago para hasta 25 productos." },
+    booking: { name: "Integración de reservas", description: "Citas en línea conectadas a tu calendario." },
+    newsletter: { name: "Integración de boletín", description: "Formularios de suscripción conectados a Mailchimp, Klaviyo o ConvertKit." },
+    blog: { name: "Configuración de blog", description: "Un blog diseñado, fácil de actualizar y con categorías." },
+    "seo-plus": { name: "SEO avanzado", description: "Investigación de palabras clave, datos estructurados y optimización en la página." },
+    "google-business": { name: "Perfil de Empresa de Google", description: "Configuración y optimización para que los clientes te encuentren en Maps." },
+    "care-plan": { name: "Plan de mantenimiento de 3 meses", description: "Actualizaciones, copias de seguridad, supervisión y pequeños cambios tras el lanzamiento." },
+    rush: { name: "Entrega urgente", description: "Pasa al principio de la cola: lanza en aproximadamente la mitad de tiempo." },
+  },
+  extraPagesItem: plural({ one: "Páginas adicionales ({count} página)", other: "Páginas adicionales ({count} páginas)" }),
+
+  styles: {
+    minimal: { name: "Minimalista", description: "Sereno, espacioso y preciso." },
+    editorial: { name: "Editorial", description: "Tipografía e imágenes de revista." },
+    warm: { name: "Cálido y orgánico", description: "Tonos suaves, acogedor y humano." },
+    bold: { name: "Audaz y moderno", description: "Tipografía segura, contraste marcado." },
+  },
+
+  industries: {
+    beauty: "Belleza y cosmética",
+    hospitality: "Restauración y hostelería",
+    wellness: "Bienestar y fitness",
+    professional: "Servicios profesionales",
+    interiors: "Interiorismo y arquitectura",
+    retail: "Comercio y tienda en línea",
+    health: "Salud y medicina",
+    realEstate: "Inmobiliaria",
+    creative: "Creatividad y medios",
+    other: "Otro",
+  },
+
+  pageNames: {
+    home: "Inicio",
+    about: "Nosotros",
+    services: "Servicios",
+    contact: "Contacto",
+    gallery: "Galería",
+    journal: "Blog",
+    menu: "Carta",
+    shop: "Tienda",
+    booking: "Reservas",
+    team: "Equipo",
+    pricing: "Precios",
+    faq: "Preguntas frecuentes",
+    testimonials: "Testimonios",
+    careers: "Empleo",
+    locations: "Ubicaciones",
+    events: "Eventos",
+  },
+
+  faq: [
+    {
+      q: "¿Cuánto tarda un sitio web?",
+      a: "Los sitios Starter suelen lanzarse en 7–10 días, los Business en 2–3 semanas y los Premium en 3–4 semanas. La entrega urgente está disponible como extra. Los plazos empiezan cuando recibimos tu contenido.",
+    },
+    {
+      q: "¿Qué tengo que aportar?",
+      a: "Tu logotipo, las fotos que quieras usar y los textos de tus páginas. Los subes al hacer el pedido y no puedes pagar sin ellos. ¿No tienes textos? Añade redacción profesional y los escribimos por ti.",
+    },
+    {
+      q: "¿Cómo funciona el pago?",
+      a: "Todos los proyectos se pagan en su totalidad al finalizar la compra a través de Stripe. Todos los pagos son definitivos y no reembolsables, así que revisa tu paquete y tus extras antes de pagar.",
+    },
+    {
+      q: "¿El sitio web es mío?",
+      a: "Sí. Una vez pagado el proyecto en su totalidad, el sitio, el diseño y el contenido son tuyos. Lo configuramos todo en cuentas de tu propiedad.",
+    },
+    {
+      q: "¿Y el alojamiento y mi dominio?",
+      a: "Te ayudamos a conectar un dominio de tu propiedad (o a comprar uno) y a configurar un alojamiento fiable. El proveedor factura el alojamiento directamente; normalmente entre $0 y $25 al mes según tu sitio.",
+    },
+    {
+      q: "¿Y si más adelante necesito más páginas?",
+      a: "Puedes añadir páginas en cualquier momento por $75 cada una, o mejorar tu paquete antes de que empiece el proyecto.",
+    },
+    {
+      q: "¿Qué pasa si no me gusta el diseño?",
+      a: "Todos los paquetes incluyen rondas de revisión y compartimos los diseños pronto para que tus comentarios den forma al trabajo. Verás el diseño de tu página de inicio antes de que construyamos nada más.",
+    },
+  ],
+
+  cta: {
+    eyebrow: "Empieza tu proyecto",
+    title: "¿Listo para un sitio web que trabaje tanto como tú?",
+    description: "Configura tu sitio web en unos diez minutos. Precios claros, un equipo real y una fecha de lanzamiento con la que puedes planificar.",
+  },
+
+  configurator: {
+    steps: {
+      package: "Paquete",
+      configure: "Configurar",
+      addons: "Extras",
+      details: "Tu proyecto",
+      assets: "Archivos",
+      review: "Revisar y pagar",
+    },
+    progressLabel: "Progreso del pedido",
+    stepOf: "Paso {n} de {total}",
+    stepStatus: "Paso {n} de {total}: {label}",
+    back: "Atrás",
+    continue: "Continuar",
+    uploading: "Subiendo…",
+    pay: "Pagar {amount} de forma segura",
+    paySecurely: "Pagar de forma segura",
+    redirecting: "Redirigiendo a Stripe…",
+    redirectingShort: "Redirigiendo…",
+    total: "Total",
+    questions: "¿Preguntas antes de pedir? Escribe a {email}.",
+    cancelledNotice:
+      "Se canceló el pago y no se ha cobrado nada. Tus datos están guardados en esta pestaña del navegador, así que puedes continuar justo aquí.",
+    previewNotice:
+      "Este es un enlace de vista previa, así que los pagos están desactivados. En el sitio real, este botón abre el pago seguro de Stripe.",
+    clearSaved: "Borrar mis datos guardados",
+    clearedSaved: "Se han borrado tus datos guardados.",
+    errorSummary: plural({ one: "Corrige {count} problema antes de continuar.", other: "Corrige {count} problemas antes de continuar." }),
+    errors: {
+      generic: "Algo salió mal por nuestra parte. Inténtalo de nuevo.",
+      network: "No pudimos conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.",
+      timeout: "Está tardando más de lo esperado. Comprueba tu conexión e inténtalo de nuevo.",
+      rateLimited: "Demasiados intentos. Espera un minuto e inténtalo de nuevo.",
+      unavailable: "Los pagos en línea no están disponibles en este momento. Escríbenos por correo para completar tu pedido.",
+      validation: "Algunos datos necesitan revisión.",
+      checkoutFailed: "No pudimos iniciar el pago. Inténtalo de nuevo en un momento.",
+    },
+    summary: {
+      eyebrow: "Tu sitio web",
+      choosePackage: "Elige un paquete para ver tu resumen.",
+      timeline: "Plazo estimado: {timeline}",
+      totalPaid: "Total, pago completo",
+      pages: "Páginas ({count})",
+      label: "Resumen del pedido",
+    },
+    package: {
+      title: "Elige tu punto de partida.",
+      description:
+        "Todos los paquetes incluyen diseño a medida, adaptación a móviles y ayuda con el lanzamiento. Puedes añadir más en los siguientes pasos.",
+      legend: "Paquetes",
+      more: plural({ one: "+{count} más", other: "+{count} más" }),
+      notSure: "¿No lo tienes claro?",
+      compareLink: "Compara los paquetes lado a lado",
+    },
+    configure: {
+      title: "Da forma a tu sitio web.",
+      description: "Elige una dirección de diseño y las páginas que necesitas. Lo afinaremos todo juntos en la llamada inicial.",
+      styleLegend: "Dirección de diseño",
+      pagesLegend: "Páginas",
+      pagesCount: "{count} de {limit} incluidas",
+      extraPages: "{count} extra × {price}",
+      remove: "Quitar la página {page}",
+      newPageLabel: "Nombre de la nueva página",
+      newPagePlaceholder: "Añade una página, p. ej. «Carta»",
+      add: "Añadir",
+      suggestions: "Páginas sugeridas",
+      addSuggestion: "Añadir {page}",
+      colorLabel: "Colores o notas de marca",
+      colorPlaceholder: "p. ej. Neutros cálidos; nuestro logotipo es verde oscuro",
+    },
+    addons: {
+      title: "Añade lo que necesites.",
+      description: "Extras opcionales para tu {package}. No se muestran los elementos ya incluidos en tu paquete.",
+      legend: "Extras opcionales",
+      extraTitle: plural({ one: "Páginas adicionales × {count}", other: "Páginas adicionales × {count}" }),
+      extraNote: "Añadidas automáticamente según tu lista de páginas ({price} cada una).",
+      skip: "Puedes saltarte este paso: también puedes añadir extras más adelante.",
+    },
+    details: {
+      title: "Cuéntanos sobre tu negocio.",
+      description: "Cuanto más sepamos, mejor será tu primer diseño. Lleva unos tres minutos.",
+      fullName: "Nombre completo",
+      email: "Correo electrónico",
+      emailHint: "Te enviaremos la confirmación aquí.",
+      phone: "Teléfono",
+      businessName: "Nombre del negocio",
+      industry: "Sector",
+      industryPlaceholder: "Selecciona un sector",
+      currentWebsite: "Sitio web actual",
+      websitePlaceholder: "tunegocio.com",
+      goals: "¿Qué debe lograr tu nuevo sitio web?",
+      goalsPlaceholder: "p. ej. Conseguir más reservas en línea, parecer más consolidado que la competencia, vender nuestros productos en línea…",
+      goalsHint: "Al menos 20 caracteres.",
+      audience: "¿Quiénes son tus clientes ideales?",
+      inspiration: "Sitios web que admiras",
+      inspirationPlaceholder: "Enlaces y qué te gusta de ellos",
+      hasDomain: "¿Tienes un dominio?",
+      domain: { yes: "Sí", no: "No", unsure: "No lo sé" },
+      launchDate: "Fecha de lanzamiento ideal",
+      honeypot: "Deja este campo vacío",
+    },
+    assets: {
+      title: "Comparte los recursos de tu marca.",
+      description:
+        "Sube tu logotipo, fotos, textos, cartas o folletos. Este paso es obligatorio: necesitas subir al menos un archivo para continuar.",
+      dropHere: "Arrastra archivos aquí, o",
+      browse: "Buscar archivos",
+      rules: "Imágenes, PDF, documentos, archivos de diseño o ZIP · hasta 15 MB cada uno · máximo {max} archivos",
+      inputLabel: "Subir archivos",
+      listLabel: "Archivos subidos",
+      uploaded: "{size} · Subido",
+      uploadingFile: "Subiendo {name}",
+      remove: "Quitar {name}",
+      dismiss: "Descartar {name}",
+      notesLabel: "Notas sobre tus archivos",
+      notesPlaceholder: "p. ej. Hay más fotos en una carpeta de Google Drive; enlace aquí",
+      errors: {
+        limit: "Se alcanzó el límite de {max} archivos.",
+        tooLarge: "Supera los 15 MB.",
+        type: "Este tipo de archivo no es compatible.",
+        failed: "Error al subir. Inténtalo de nuevo.",
+        network: "Error de red: inténtalo de nuevo.",
+        rateLimited: "Demasiadas subidas. Espera un minuto e inténtalo de nuevo.",
+      },
+    },
+    review: {
+      title: "Revisa tu pedido.",
+      description: "Comprueba que todo esté correcto. Te llevaremos a Stripe para completar el pago de forma segura.",
+      sections: { website: "Sitio web", project: "Tu proyecto", assets: "Archivos" },
+      edit: "Editar",
+      editSection: "Editar {section}",
+      rows: {
+        package: "Paquete",
+        style: "Dirección de diseño",
+        pages: "Páginas",
+        timeline: "Plazo estimado",
+        brandNotes: "Notas de marca",
+        contact: "Contacto",
+        business: "Negocio",
+        goals: "Objetivos",
+        currentWebsite: "Sitio web actual",
+        files: "Archivos",
+      },
+      filesUploaded: plural({ one: "{count} archivo subido", other: "{count} archivos subidos" }),
+      agreementTitle: "Acuerdo de pago",
+      englishBinding: "El acuerdo de pago y los términos siguientes se muestran en inglés, que es la versión vinculante.",
+      readAgreement: "Leer el acuerdo de pago completo",
+      privacyNote: "Usamos tus datos únicamente para planificar y realizar tu proyecto.",
+      privacyLink: "Política de privacidad",
+      secure: "Los pagos se procesan de forma segura con Stripe. Pagarás {amount} en su totalidad.",
+    },
+  },
+
+  validation: {
+    packageRequired: "Elige un paquete para continuar.",
+    styleRequired: "Elige una dirección de diseño.",
+    pagesRequired: "Añade al menos una página.",
+    pageName: "Los nombres de página no pueden estar vacíos.",
+    nameRequired: "Escribe tu nombre completo.",
+    emailInvalid: "Escribe un correo electrónico válido, como nombre@ejemplo.com.",
+    phoneInvalid: "Escribe un número de teléfono válido o deja el campo vacío.",
+    businessRequired: "Indica el nombre de tu negocio.",
+    industryRequired: "Selecciona tu sector.",
+    urlInvalid: "Escribe una dirección web válida, como tunegocio.com.",
+    goalsTooShort: "Una o dos frases nos ayudan a planificar: escribe al menos 20 caracteres.",
+    tooLong: "Es demasiado largo. Acórtalo, por favor.",
+    filesRequired: "Sube tu contenido para continuar, como tu logotipo, fotos o textos.",
+    agreementRequired: "Confirma que entiendes que todos los pagos son definitivos.",
+    termsRequired: "Acepta los Términos y condiciones para continuar.",
+    invalid: "Revisa este campo.",
+  },
+
+  success: {
+    eyebrow: "Pedido {ref}",
+    title: "Gracias, {name}. Tu sitio web ya está en marcha.",
+    emailSent: "Enviaremos una confirmación a {email}. Esto es lo que pasa a continuación.",
+    next: [
+      { t: "Correo de inicio", d: "En un día laborable te escribiremos para programar una llamada inicial de 30 minutos." },
+      { t: "Tablero del proyecto", d: "Recibirás un tablero compartido con tu calendario y cualquier otra cosa que necesitemos de ti." },
+      { t: "Primer diseño", d: "El diseño de tu página de inicio llegará a tu bandeja de entrada, normalmente en una semana." },
+    ],
+    summary: "Resumen del pedido",
+    paid: "Pagado en su totalidad",
+    finalNote: "Todos los pagos son definitivos y no reembolsables.",
+    pages: "Páginas",
+    assets: "Archivos recibidos",
+    files: plural({ one: "{count} archivo", other: "{count} archivos" }),
+    explore: "Explorar nuestro trabajo",
+    confirming: "Confirmando tu pago…",
+    notFoundTitle: "No encontramos ese pedido.",
+    notFoundBody: "Si acabas de pagar, revisa tu correo para ver el recibo o escríbenos y lo resolveremos enseguida.",
+    processingTitle: "Tu pago se está procesando.",
+    processingBody:
+      "Algunos métodos de pago tardan un poco más en confirmarse. Te enviaremos la confirmación en cuanto se complete. No hace falta volver a hacer el pedido.",
+    failedTitle: "Tu pago no se completó.",
+    failedBody: "No se ha cobrado nada. Tus datos están guardados en esta pestaña del navegador, así que puedes intentarlo de nuevo.",
+    expiredTitle: "Esta sesión de pago ha caducado.",
+    expiredBody: "No se ha cobrado nada. Vuelve al paso de revisión para iniciar un nuevo pago.",
+    returnToCheckout: "Volver al pago",
+    contact: "Contáctanos",
+    unavailableTitle: "No pudimos comprobar tu pago ahora mismo.",
+    unavailableBody:
+      "Si completaste el pago, está seguro: recibirás un recibo de Stripe. Actualiza la página en un momento o contáctanos.",
+  },
+
+  notFound: {
+    eyebrow: "404",
+    title: "Esta página tomó otro camino.",
+    body: "La página que buscas no existe o se ha movido.",
+    popular: "Páginas populares",
+  },
+
+  error: {
+    title: "Algo salió mal.",
+    body: "Se produjo un error inesperado en esta página. Inténtalo de nuevo; si sigue ocurriendo, escríbenos por correo.",
+    retry: "Intentar de nuevo",
+  },
+
+  legal: {
+    draftNotice:
+      "Borrador en revisión: este documento aún no ha sido aprobado por el propietario del negocio ni por un asesor legal y puede cambiar.",
+    englishOnly: "Este documento solo está disponible en inglés. Todavía no hay una traducción revisada profesionalmente.",
+    lastUpdated: "Última actualización: {date}",
+  },
+};
+
+export default es;

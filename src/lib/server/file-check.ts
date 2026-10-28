@@ -14,7 +14,15 @@ const SIGNATURES: Record<string, (b: Uint8Array) => boolean> = {
   fig: (b) => isZip(b) || ascii(b, 0, 8) === "fig-kiwi",
   psd: (b) => ascii(b, 0, 4) === "8BPS",
   doc: (b) => b[0] === 0xd0 && b[1] === 0xcf && b[2] === 0x11 && b[3] === 0xe0,
+  svg: isSafeSvg,
 };
+
+/** SVG logos are fine; SVGs carrying scripts, event handlers or embedded documents are not. */
+function isSafeSvg(b: Uint8Array) {
+  const text = new TextDecoder("utf-8", { fatal: false }).decode(b);
+  if (!/<svg[\s>]/i.test(text)) return false;
+  return !/<script|<foreignobject|<iframe|<embed|<object|javascript:|\son[a-z]+\s*=/i.test(text);
+}
 
 function ascii(b: Uint8Array, start: number, end: number) {
   return String.fromCharCode(...b.slice(start, end));
@@ -32,7 +40,7 @@ function looksDangerous(b: Uint8Array) {
 }
 
 /**
- * Returns true when the file's first bytes are consistent with its extension.
+ * Returns true when the file's first bytes (all of it, for SVG) are consistent with its extension.
  * This is a sanity check, not malware scanning — uploaded files are stored
  * privately and served only as downloads.
  */

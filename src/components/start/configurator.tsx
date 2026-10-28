@@ -278,7 +278,7 @@ export default function Configurator() {
                     state === "current" ? "bg-ink text-canvas" : state === "done" ? "text-ink hover:bg-surface" : "text-muted"
                   }`}
                 >
-                  <span className="font-mono text-[11px] opacity-80" aria-hidden>
+                  <span className="font-mono text-[11px]" aria-hidden>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   {c.steps[s]}
@@ -308,7 +308,7 @@ export default function Configurator() {
             </div>
           )}
 
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={step}
               initial={{ opacity: 0, y: 14 }}

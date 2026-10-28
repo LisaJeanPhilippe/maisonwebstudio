@@ -118,7 +118,7 @@ export function SelectedWork({ showFilters = true }: { showFilters?: boolean }) 
         </>
       )}
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={active}
           initial={{ opacity: 0, y: 12 }}

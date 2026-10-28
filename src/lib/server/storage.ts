@@ -161,10 +161,10 @@ export async function updateOrder(
 
 export async function saveUpload(
   file: File,
+  type = "application/octet-stream",
 ): Promise<{ id: string; name: string; size: number; type: string }> {
   const id = crypto.randomUUID();
   const safeName = sanitizeFileName(file.name);
-  const type = file.type || "application/octet-stream";
   const s = store();
   await s.put({ key: `uploads/${id}/${safeName}`, body: await file.arrayBuffer(), contentType: type, download: true });
   await s.put(

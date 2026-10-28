@@ -33,7 +33,7 @@ export function BrowserFrame({
         </div>
         <div
           className={`mx-auto flex h-5 w-full max-w-[min(60%,320px)] items-center justify-center rounded-md text-[10px] tracking-tight md:h-6 md:text-[11px] ${
-            dark ? "bg-white/[0.06] text-white/50" : "bg-white text-black/45"
+            dark ? "bg-white/[0.06] text-white/75" : "bg-white text-black/65"
           }`}
         >
           <span dir="ltr">{url}</span>

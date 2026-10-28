@@ -6,7 +6,9 @@ import { localizePath, type Locale } from "@/i18n/config";
 import { fmt, formatPrice } from "@/i18n/format";
 import type { Messages } from "@/i18n/messages";
 
-export function PricingCards({ locale, m }: { locale: Locale; m: Messages }) {
+/** `headingLevel` keeps the outline valid: h3 under a section h2 on the home page, h2 directly under the pricing h1. */
+export function PricingCards({ locale, m, headingLevel = 3 }: { locale: Locale; m: Messages; headingLevel?: 2 | 3 }) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
     <ul className="grid gap-4 lg:grid-cols-3">
       {PACKAGES.map((pkg, i) => {
@@ -22,9 +24,9 @@ export function PricingCards({ locale, m }: { locale: Locale; m: Messages }) {
                 }`}
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 id={`pkg-${pkg.id}`} className="text-[1.125rem] font-medium tracking-[-0.02em]">
+                  <Heading id={`pkg-${pkg.id}`} className="text-[1.125rem] font-medium tracking-[-0.02em]">
                     {copy.name}
-                  </h3>
+                  </Heading>
                   {featured && (
                     <span className="rounded-full border border-canvas/40 px-3 py-1 text-[12px] text-canvas">
                       {m.common.mostChosen}
@@ -32,7 +34,7 @@ export function PricingCards({ locale, m }: { locale: Locale; m: Messages }) {
                   )}
                 </div>
                 <p className="mt-10 flex flex-wrap items-baseline gap-2">
-                  <span className="text-[3.5rem] font-medium leading-none tracking-[-0.05em]">
+                  <span className="text-[2.75rem] font-medium leading-none tracking-[-0.05em] sm:text-[3.5rem]">
                     {formatPrice(locale, pkg.price)}
                   </span>
                   <span className={featured ? "text-canvas/80" : "text-muted"}>{m.common.oneTime}</span>

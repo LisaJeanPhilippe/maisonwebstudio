@@ -33,7 +33,7 @@ export default async function PricingPage({ params }: PageProps<"/[lang]/pricing
       </section>
 
       <section className="container-page" aria-label={m.pricing.eyebrow}>
-        <PricingCards locale={locale} m={m} />
+        <PricingCards locale={locale} m={m} headingLevel={2} />
         <p className="mt-8 text-center text-sm text-muted">
           {before}
           <Link href={localizePath(locale, "/payment-agreement")} className="text-ink underline underline-offset-4">
@@ -48,7 +48,7 @@ export default async function PricingPage({ params }: PageProps<"/[lang]/pricing
           <p className="eyebrow mb-6">{m.pricing.compareEyebrow}</p>
           <h2 id="compare-title" className="text-headline font-medium">{m.pricing.compareTitle}</h2>
         </Reveal>
-        <div className="-mx-[var(--space-gutter)] mt-12 overflow-x-auto px-[var(--space-gutter)]" tabIndex={0} role="region" aria-labelledby="compare-title">
+        <div className="relative -mx-[var(--space-gutter)] mt-12 overflow-x-auto px-[var(--space-gutter)]" tabIndex={0} role="region" aria-labelledby="compare-title">
           <table className="w-full min-w-[640px] border-collapse text-start text-[15px]">
             <caption className="sr-only">{m.pricing.compareCaption}</caption>
             <thead>

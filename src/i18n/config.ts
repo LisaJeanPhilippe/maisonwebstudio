@@ -54,7 +54,8 @@ export function localizePath(locale: Locale, href: string): string {
 /** Splits "/es/pricing" into { locale: "es", path: "/pricing" }. */
 export function splitLocale(pathname: string): { locale: Locale; path: string } {
   const [, first, ...rest] = pathname.split("/");
-  if (isLocale(first) && first !== DEFAULT_LOCALE) {
+  // English pages are served from internal /en/* routes, so client hooks can report either form.
+  if (isLocale(first)) {
     return { locale: first, path: `/${rest.join("/")}` };
   }
   return { locale: DEFAULT_LOCALE, path: pathname || "/" };

@@ -1,21 +1,18 @@
-"use client";
+import type { ComponentProps, CSSProperties } from "react";
 
-import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
+type RevealProps = ComponentProps<"div"> & { delay?: number; y?: number };
 
-type RevealProps = HTMLMotionProps<"div"> & { delay?: number; y?: number };
-
-/** Soft fade-and-rise entrance as an element scrolls into view. */
-export function Reveal({ delay = 0, y = 24, children, ...props }: RevealProps) {
-  const reduce = useReducedMotion();
+/**
+ * Soft fade-and-rise entrance as an element scrolls into view.
+ * Pure CSS (scroll-driven animation, see `.reveal` in globals.css): content is
+ * visible in the server HTML, so it never waits for JavaScript, and browsers
+ * without scroll timelines or with reduced motion simply show it.
+ */
+export function Reveal({ delay = 0, y = 24, className = "", style, children, ...props }: RevealProps) {
+  const vars = { "--enter-y": `${y}px`, "--reveal-offset": `${Math.round(delay * 400)}px`, ...style } as CSSProperties;
   return (
-    <motion.div
-      initial={reduce ? false : { opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay }}
-      {...props}
-    >
+    <div className={`reveal ${className}`} style={vars} {...props}>
       {children}
-    </motion.div>
+    </div>
   );
 }

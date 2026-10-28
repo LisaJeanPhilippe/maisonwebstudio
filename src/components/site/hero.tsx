@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { BrowserFrame, PhoneFrame } from "@/components/mockups/frames";
 import { AureliaDemo } from "@/components/demos/aurelia";
@@ -8,8 +8,6 @@ import { MaisonNoirDemo } from "@/components/demos/maison-noir";
 import { SolaceDemo } from "@/components/demos/solace";
 import { ArrowRight } from "@/components/ui/icons";
 import { LocaleLink, useI18n } from "@/i18n/client";
-
-const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Hero() {
   const { m } = useI18n();
@@ -24,38 +22,23 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="container-page pb-16 pt-14 md:pb-24 md:pt-24">
-        <motion.p
-          className="eyebrow mb-8 flex items-center gap-3"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease }}
-        >
+        <p className="enter eyebrow mb-8 flex items-center gap-3" style={{ "--enter-y": "8px" } as CSSProperties}>
           <span className="h-1.5 w-1.5 rounded-full bg-sage" />
           {m.hero.eyebrow}
-        </motion.p>
+        </p>
 
         <h1 className="max-w-[13ch] text-display font-medium text-balance">
           {words.map((word, i) => (
             <span key={i} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
-              <motion.span
-                className="inline-block"
-                initial={reduce ? false : { y: "105%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 1, ease, delay: 0.08 + i * 0.06 }}
-              >
+              <span className="rise inline-block" style={{ "--enter-delay": `${0.08 + i * 0.06}s` } as CSSProperties}>
                 {word}
                 {i < words.length - 1 && " "}
-              </motion.span>
+              </span>
             </span>
           ))}
         </h1>
 
-        <motion.div
-          className="mt-10 grid gap-10 md:mt-14 md:grid-cols-12 md:items-end"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease, delay: 0.55 }}
-        >
+        <div className="enter mt-10 grid gap-10 md:mt-14 md:grid-cols-12 md:items-end" style={{ "--enter-delay": "0.3s" } as CSSProperties}>
           <p className="text-lede text-muted text-pretty md:col-span-6 lg:col-span-5">
             {m.hero.lede}
           </p>
@@ -68,17 +51,11 @@ export function Hero() {
               {m.common.viewOurWork}
             </LocaleLink>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Showcase */}
-      <motion.div
-        ref={stage}
-        className="container-page"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, ease, delay: 0.7 }}
-      >
+      <div ref={stage} className="enter container-page" style={{ "--enter-y": "40px", "--enter-delay": "0.45s" } as CSSProperties}>
         <div
           role="img"
           aria-label={m.hero.showcaseLabel}
@@ -108,7 +85,7 @@ export function Hero() {
             </PhoneFrame>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
 
       <div className="container-page">
         <ul className="grid grid-cols-1 gap-px border-b border-line py-8 text-sm sm:grid-cols-3 md:py-10">

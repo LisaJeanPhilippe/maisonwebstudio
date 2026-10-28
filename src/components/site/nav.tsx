@@ -83,7 +83,7 @@ export function Nav() {
                 <LocaleLink
                   href={link.href}
                   className={`inline-flex min-h-10 items-center rounded-full px-4 text-[14.5px] tracking-[-0.01em] transition-colors duration-300 ${
-                    isActive(link.href) ? "text-ink" : "text-muted hover:text-ink"
+                    isActive(link.href) ? "bg-ink/[0.06] text-ink" : "text-ink-soft/80 hover:text-ink"
                   }`}
                   aria-current={isActive(link.href) ? "page" : undefined}
                 >
