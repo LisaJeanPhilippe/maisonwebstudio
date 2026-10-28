@@ -104,7 +104,6 @@ body {
 /* Long words (e.g. Russian, German-style compounds, URLs) wrap instead of widening the page. */
 :where(h1, h2, h3, h4, p, li, dt, dd, th, td, summary, label, figcaption, blockquote) {
   overflow-wrap: break-word;
-  hyphens: auto;
 }
 :where(h1, h2, h3, .text-display, .text-headline, .text-title) {
   overflow-wrap: anywhere;
