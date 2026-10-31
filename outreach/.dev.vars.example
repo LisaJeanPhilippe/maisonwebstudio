@@ -1,0 +1,13 @@
+# Copy to outreach/.dev.vars for `npm run outreach:dev`. Never commit .dev.vars.
+ENVIRONMENT=development
+# Skip Cloudflare Access locally (ignored in production)
+DEV_ADMIN_EMAIL=you@example.org
+# Use the offline AI stub instead of the Claude API (ignored in production)
+DEV_AI_PROVIDER=stub
+APP_SECRET=replace-with-32+-random-characters-for-local-dev
+INTERNAL_SECRET=replace-with-32+-random-characters-for-local-dev
+TEST_RECIPIENTS=you@yourdomain.com
+SENDER_EMAIL=you@yourdomain.com
+BUSINESS_POSTAL_ADDRESS="PO Box 000, City, ST 00000"
+PUBLIC_BASE_URL=http://localhost:8787
+# Optional for real AI locally: ANTHROPIC_API_KEY=...

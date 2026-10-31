@@ -1,0 +1,67 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  // Maison Web Studio — lead discovery and outreach assistant (separate from the public website).
+  "name": "maison-outreach",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+
+  // Create once: npx wrangler d1 create maison-outreach   → paste the id below.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "maison-outreach", "database_id": "REPLACE_WITH_D1_DATABASE_ID", "migrations_dir": "migrations" }
+  ],
+
+  // Create once: npx wrangler queues create maison-outreach-jobs  (and maison-outreach-dlq)
+  "queues": {
+    "producers": [{ "binding": "JOBS", "queue": "maison-outreach-jobs" }],
+    "consumers": [
+      {
+        "queue": "maison-outreach-jobs",
+        "max_batch_size": 1,
+        "max_concurrency": 1,
+        "max_retries": 3,
+        "dead_letter_queue": "maison-outreach-dlq"
+      }
+    ]
+  },
+
+  "ratelimits": [
+    { "name": "ADMIN_LIMITER", "namespace_id": "2001", "simple": { "limit": 120, "period": 60 } },
+    { "name": "PUBLIC_LIMITER", "namespace_id": "2002", "simple": { "limit": 20, "period": 60 } }
+  ],
+
+  "triggers": {
+    "crons": [
+      // Every 5 minutes: send eligible emails (one at a time, within limits), process inbox, schedule follow-ups.
+      "*/5 * * * *",
+      // Weekdays 13:07 UTC (≈ 9:07 am US Eastern): discover and research new leads.
+      "7 13 * * 1-5"
+    ]
+  },
+
+  "vars": {
+    "ENVIRONMENT": "production",
+    "BUSINESS_NAME": "Maison Web Studio",
+    "WEBSITE_URL": "https://maisonwebstudio.com",
+    "SENDER_NAME": "Lisa",
+    "SENDER_EMAIL": "",
+    "BUSINESS_POSTAL_ADDRESS": "",
+    // Public URL of this worker (used for unsubscribe links), e.g. https://go.getmaisonwebstudio.com
+    "PUBLIC_BASE_URL": "",
+    // Cloudflare Access (Zero Trust) settings protecting /admin
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": "",
+    // Comma-separated emails allowed into the dashboard (checked in addition to Access)
+    "ADMIN_EMAILS": "",
+    // Comma-separated addresses that may receive email while TEST MODE is on (your own inboxes)
+    "TEST_RECIPIENTS": "",
+    "SENDER_TIMEZONE": "America/New_York",
+    "AI_MODEL": "claude-opus-5-5"
+  }
+  // Secrets (npx wrangler secret put NAME -c outreach/wrangler.jsonc):
+  //   ANTHROPIC_API_KEY, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN,
+  //   APP_SECRET (signs unsubscribe links and admin form tokens), INTERNAL_SECRET (website → outreach events),
+  //   PAGESPEED_API_KEY (optional)
+}

@@ -13,6 +13,7 @@ export const cookiePolicy = (): LegalDocument => ({
           list: [
             `“${LOCALE_COOKIE}” cookie (first-party, 1 year): remembers the language you choose with the language selector. It is set only when you pick a language.`,
             "“masion:configurator:v2” session storage (first-party): keeps your order details while you fill in the order form, so a refresh or a cancelled payment doesn’t lose your work. It is deleted automatically when you close the browser tab, and you can clear it at any time with “Clear my saved details”.",
+            "“maison:ref” session storage (first-party): if you arrive from one of our emails, holds the short reference code from that link for this browser tab only, so we can see whether our email led to an order. It is deleted when you close the tab.",
             "Stripe (third-party, on checkout.stripe.com only): when you go to checkout, Stripe sets cookies on its own pages that are needed to process payment and prevent fraud. See Stripe’s cookie policy.",
             "Cloudflare (our hosting and security provider): may set strictly necessary security cookies, such as for bot protection, if those protections are enabled.",
           ],

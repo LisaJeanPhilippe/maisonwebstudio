@@ -91,6 +91,8 @@ export const orderSchema = z.object({
   ...reviewStepSchema.shape,
   /** UI language the order was placed in (informational only). */
   locale: text(10).optional().default("en"),
+  /** Opaque outreach reference if the visitor arrived from one of our emails (informational only). */
+  ref: z.string().regex(/^[a-z0-9]{6,32}$/, { message: "invalid" }).optional(),
   /** Honeypot: hidden from people, often filled by bots. Must be empty. */
   website2: z.string().max(0, { message: "invalid" }).optional().default(""),
 });

@@ -43,6 +43,9 @@ const preferenceScript = `(function(){try{var m=document.cookie.match(/(?:^|; )$
   LOCALES.filter((l) => l !== DEFAULT_LOCALE),
 )};if(l&&ok.indexOf(l)>-1){var p=location.pathname;location.replace("/"+l+(p==="/"?"":p)+location.search+location.hash);}}catch(e){}})();`;
 
+/** Keeps the opaque outreach reference (from utm_content) in this tab's sessionStorage, for order attribution. */
+const outreachRefScript = `(function(){try{var p=new URLSearchParams(location.search);if(p.get("utm_campaign")==="maison_outreach"){var r=(p.get("utm_content")||"").split("-s")[0];if(/^[a-z0-9]{6,32}$/.test(r))sessionStorage.setItem("maison:ref",r)}}catch(e){}})();`;
+
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
@@ -53,6 +56,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
     <html lang={meta.tag} dir={meta.dir} className={`${fontVariables} antialiased`} suppressHydrationWarning>
       <head>
         {lang === DEFAULT_LOCALE && <script dangerouslySetInnerHTML={{ __html: preferenceScript }} />}
+        <script dangerouslySetInnerHTML={{ __html: outreachRefScript }} />
       </head>
       <body className="min-h-dvh">
         <I18nProvider locale={lang} messages={pickClientMessages(messages)}>

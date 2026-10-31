@@ -1,6 +1,7 @@
 import "server-only";
 import type Stripe from "stripe";
 import { sendOrderConfirmation } from "./email";
+import { reportOutreachConversion } from "./outreach";
 import { getOrder, updateOrder, type OrderStatus, type StoredOrder } from "./storage";
 
 /** States an order can no longer leave through ordinary checkout events. */
@@ -47,6 +48,7 @@ export async function handlePaidSession(session: Stripe.Checkout.Session): Promi
   if (updated.status === "paid" && !updated.confirmationSentAt) {
     await sendOrderConfirmation(updated);
     updated = (await updateOrder(order.id, { confirmationSentAt: new Date().toISOString() })) ?? updated;
+    await reportOutreachConversion(updated.order.ref);
   }
   return updated;
 }

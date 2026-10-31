@@ -78,6 +78,14 @@ function loadInitialState(m: ClientMessages): { draft: Draft; step: StepId; noti
 
 type ApiError = { code?: keyof ClientMessages["configurator"]["errors"]; fields?: Record<string, string> };
 
+function outreachRef(): string | undefined {
+  try {
+    return sessionStorage.getItem("maison:ref") || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export default function Configurator() {
   const { locale, m } = useI18n();
   const c = m.configurator;
@@ -196,7 +204,7 @@ export default function Configurator() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...draft, locale }),
+        body: JSON.stringify({ ...draft, locale, ref: outreachRef() }),
         signal: controller.signal,
       });
       const body = (await res.json().catch(() => ({}))) as ApiError & { url?: string };

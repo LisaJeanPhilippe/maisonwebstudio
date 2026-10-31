@@ -34,6 +34,15 @@ export const privacyPolicy = (): LegalDocument => ({
       ],
     },
     {
+      heading: "Businesses we contact about our services",
+      body: [
+        "We sometimes email U.S. businesses that we believe could benefit from a new or improved website. To decide whether to contact a business and what to suggest, we use publicly available business information: the business name, category, city and state, its public website, public business email address and phone number, public social-media pages, and what we observe on its public website (for example whether it works well on phones or offers online booking). We collect this from public web pages, public map data (OpenStreetMap) and our own research, sometimes with the help of AI tools.",
+        "We only use contact details a business publishes for customers, we don't collect sensitive personal information, and we never sell or share this information for advertising.",
+        "Links in our emails contain a short reference code so we can count whether a visit or an order came from our email. We don't use tracking pixels.",
+        "Every email includes a way to opt out. If you reply asking us to stop or use the unsubscribe link, we add your address to a do-not-contact list immediately and keep it only to make sure we never email you again. Information about businesses that don't become customers is deleted when it is no longer needed for this purpose.",
+      ],
+    },
+    {
       heading: "How we use your information",
       body: [
         {

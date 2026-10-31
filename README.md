@@ -51,6 +51,10 @@ To run the browser tests against another server (e.g. `npm run preview` or stagi
 
 Package → Configure → Add-ons → Project details → Upload content (at least one file required) → Review & pay. The customer must accept the payment agreement (all payments final and non-refundable) and the Terms. Payment is always in full via Stripe Checkout. The success page only *reads* order status; the Stripe webhook is what marks an order paid, after checking the amount and currency. Progress is kept in `sessionStorage` for the current tab only.
 
+## Outreach app
+
+`outreach/` is a separate Cloudflare Worker: AI lead discovery, research, personalized email drafts, review-before-send, compliant sending, follow-ups and reply tracking. See [outreach/README.md](outreach/README.md).
+
 ## Documentation
 
 - [Deployment](docs/DEPLOYMENT.md) — Cloudflare, secrets, Stripe, domain, post-deploy checks
