@@ -16,8 +16,8 @@ export function generateStaticParams() {
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin()),
-  title: { default: "Masion Web Studio", template: "%s | Masion Web Studio" },
-  applicationName: "Masion Web Studio",
+  title: { default: "Maison Web Studio", template: "%s | Maison Web Studio" },
+  applicationName: "Maison Web Studio",
   formatDetection: { telephone: false, email: false, address: false },
   icons: {
     icon: [

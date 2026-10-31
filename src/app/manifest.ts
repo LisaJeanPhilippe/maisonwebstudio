@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Masion Web Studio",
-    short_name: "Masion",
+    name: "Maison Web Studio",
+    short_name: "Maison",
     description: "Beautiful websites built for businesses ready to grow.",
     start_url: "/",
     display: "browser",

@@ -7,16 +7,16 @@ import { plural } from "../format";
  */
 const en = {
   meta: {
-    siteName: "Masion Web Studio",
+    siteName: "Maison Web Studio",
     home: {
-      title: "Masion Web Studio — Custom websites for growing businesses",
+      title: "Maison Web Studio — Custom websites for growing businesses",
       description:
         "Modern, conversion-focused websites for small businesses. Fixed pricing from $499, a clear process, and launch in as little as 7–10 days.",
     },
     work: {
       title: "Selected work — Sample websites",
       description:
-        "Explore sample websites designed by Masion Web Studio for beauty, restaurant, wellness, interior design and professional service businesses.",
+        "Explore sample websites designed by Maison Web Studio for beauty, restaurant, wellness, interior design and professional service businesses.",
     },
     services: {
       title: "Services — Website design, e-commerce and redesigns",
@@ -31,12 +31,12 @@ const en = {
     process: {
       title: "Process — From order to launch in five steps",
       description:
-        "How Masion Web Studio takes your website from order to launch: configure, kickoff call, design, build and refine, and launch.",
+        "How Maison Web Studio takes your website from order to launch: configure, kickoff call, design, build and refine, and launch.",
     },
     about: {
       title: "About the studio",
       description:
-        "Masion Web Studio pairs the craft of an editorial design studio with the clarity of a modern product: fixed packages, transparent pricing, a defined process.",
+        "Maison Web Studio pairs the craft of an editorial design studio with the clarity of a modern product: fixed packages, transparent pricing, a defined process.",
     },
     start: {
       title: "Start your website — Configure and order",
@@ -49,8 +49,8 @@ const en = {
     demo: { title: "{name} — Live demo" },
     success: { title: "Order confirmation" },
     notFound: { title: "Page not found" },
-    privacy: { title: "Privacy Policy", description: "How Masion Web Studio collects, uses and protects your personal information." },
-    terms: { title: "Terms & Conditions", description: "The terms that apply when you use this website and purchase a website project from Masion Web Studio." },
+    privacy: { title: "Privacy Policy", description: "How Maison Web Studio collects, uses and protects your personal information." },
+    terms: { title: "Terms & Conditions", description: "The terms that apply when you use this website and purchase a website project from Maison Web Studio." },
     cookies: { title: "Cookie Policy", description: "The cookies and browser storage this website uses, and why." },
     payment: { title: "Payment & Refund Policy", description: "Payment in full at checkout and our final-payment policy." },
     accessibility: { title: "Accessibility Statement", description: "Our commitment to an accessible website, known limitations and how to report a barrier." },
@@ -83,7 +83,7 @@ const en = {
     about: "About",
     openMenu: "Open menu",
     closeMenu: "Close menu",
-    home: "Masion Web Studio — home",
+    home: "Maison Web Studio — home",
   },
 
   language: {
@@ -117,16 +117,16 @@ const en = {
     },
     hours: "Mon–Fri, 9am–6pm ET",
     location: "Remote · Worldwide",
-    rights: "© {year} Masion Web Studio. All rights reserved.",
+    rights: "© {year} Maison Web Studio. All rights reserved.",
     slogan: "Professional websites without the agency headache.",
   },
 
   hero: {
-    eyebrow: "Masion Web Studio — Now booking new projects",
+    eyebrow: "Maison Web Studio — Now booking new projects",
     headline: "Websites designed to move your business forward.",
     lede:
-      "Masion Web Studio creates modern, conversion-focused websites for businesses that want to look as professional online as they do in real life.",
-    showcaseLabel: "Sample websites designed by Masion Web Studio, shown on a laptop and a phone",
+      "Maison Web Studio creates modern, conversion-focused websites for businesses that want to look as professional online as they do in real life.",
+    showcaseLabel: "Sample websites designed by Maison Web Studio, shown on a laptop and a phone",
     trust: [
       { k: "From $499", v: "Clear, fixed pricing — no surprises" },
       { k: "7–10 days", v: "Typical launch for a Starter site" },
@@ -158,7 +158,7 @@ const en = {
     },
     services: { eyebrow: "Services", title: "Everything your website needs. Nothing it doesn’t.", cta: "Our services" },
     why: {
-      eyebrow: "Why Masion",
+      eyebrow: "Why Maison",
       title: "Professional websites without the agency headache.",
       lede: "The craft of a design studio with the clarity of a product you can buy online.",
       items: [
@@ -291,7 +291,7 @@ const en = {
   },
 
   demo: {
-    notice: "Sample site by Masion Web Studio",
+    notice: "Sample site by Maison Web Studio",
     caseStudy: "Case study",
     startYours: "Start yours",
     toolbar: "Sample site controls",
@@ -392,7 +392,7 @@ const en = {
     eyebrow: "About",
     title: "A creative studio that thinks like a technology company.",
     intro:
-      "Masion Web Studio was founded on a simple idea: great design shouldn’t require an agency retainer, and buying a website shouldn’t feel like a gamble.",
+      "Maison Web Studio was founded on a simple idea: great design shouldn’t require an agency retainer, and buying a website shouldn’t feel like a gamble.",
     p1:
       "We pair the craft of an editorial design studio with the clarity of a modern product. Fixed packages, transparent pricing and a defined process mean you know what you’re getting, when you’re getting it, and what it costs — before you begin.",
     p2:

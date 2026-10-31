@@ -4,16 +4,16 @@ import type { Messages } from "./en";
 // French — machine-assisted draft. Requires native-speaker review (docs/TRANSLATION_REVIEW.md).
 const fr: Messages = {
   meta: {
-    siteName: "Masion Web Studio",
+    siteName: "Maison Web Studio",
     home: {
-      title: "Masion Web Studio — Sites web sur mesure pour les entreprises en croissance",
+      title: "Maison Web Studio — Sites web sur mesure pour les entreprises en croissance",
       description:
         "Des sites web modernes, pensés pour convertir, pour les petites entreprises. Tarifs fixes dès 499 $, un processus clair et une mise en ligne en 7 à 10 jours seulement.",
     },
     work: {
       title: "Réalisations — Sites web d’exemple",
       description:
-        "Découvrez des sites web d’exemple conçus par Masion Web Studio pour la beauté, la restauration, le bien-être, l’architecture d’intérieur et les services professionnels.",
+        "Découvrez des sites web d’exemple conçus par Maison Web Studio pour la beauté, la restauration, le bien-être, l’architecture d’intérieur et les services professionnels.",
     },
     services: {
       title: "Services — Conception web, e-commerce et refontes",
@@ -28,12 +28,12 @@ const fr: Messages = {
     process: {
       title: "Processus — De la commande à la mise en ligne en cinq étapes",
       description:
-        "Comment Masion Web Studio mène votre site de la commande à la mise en ligne : configuration, appel de lancement, design, développement et ajustements, mise en ligne.",
+        "Comment Maison Web Studio mène votre site de la commande à la mise en ligne : configuration, appel de lancement, design, développement et ajustements, mise en ligne.",
     },
     about: {
       title: "À propos du studio",
       description:
-        "Masion Web Studio allie le savoir-faire d’un studio de design éditorial à la clarté d’un produit moderne : formules fixes, tarifs transparents, processus défini.",
+        "Maison Web Studio allie le savoir-faire d’un studio de design éditorial à la clarté d’un produit moderne : formules fixes, tarifs transparents, processus défini.",
     },
     start: {
       title: "Lancez votre site — Configurez et commandez",
@@ -44,8 +44,8 @@ const fr: Messages = {
     demo: { title: "{name} — Démo en direct" },
     success: { title: "Confirmation de commande" },
     notFound: { title: "Page introuvable" },
-    privacy: { title: "Politique de confidentialité", description: "Comment Masion Web Studio collecte, utilise et protège vos informations personnelles." },
-    terms: { title: "Conditions générales", description: "Les conditions applicables à l’utilisation de ce site et à l’achat d’un projet web auprès de Masion Web Studio." },
+    privacy: { title: "Politique de confidentialité", description: "Comment Maison Web Studio collecte, utilise et protège vos informations personnelles." },
+    terms: { title: "Conditions générales", description: "Les conditions applicables à l’utilisation de ce site et à l’achat d’un projet web auprès de Maison Web Studio." },
     cookies: { title: "Politique relative aux cookies", description: "Les cookies et le stockage du navigateur utilisés par ce site, et pourquoi." },
     payment: { title: "Politique de paiement et de remboursement", description: "Paiement intégral lors de la commande et notre politique de paiements définitifs." },
     accessibility: { title: "Déclaration d’accessibilité", description: "Notre engagement pour un site accessible, les limites connues et comment signaler un obstacle." },
@@ -78,7 +78,7 @@ const fr: Messages = {
     about: "À propos",
     openMenu: "Ouvrir le menu",
     closeMenu: "Fermer le menu",
-    home: "Masion Web Studio — accueil",
+    home: "Maison Web Studio — accueil",
   },
 
   language: { label: "Langue", button: "Langue : {name}", listLabel: "Choisissez une langue" },
@@ -108,16 +108,16 @@ const fr: Messages = {
     },
     hours: "Lun–ven, 9 h–18 h (heure de l’Est des États-Unis)",
     location: "À distance · Partout dans le monde",
-    rights: "© {year} Masion Web Studio. Tous droits réservés.",
+    rights: "© {year} Maison Web Studio. Tous droits réservés.",
     slogan: "Des sites professionnels, sans les tracas d’une agence.",
   },
 
   hero: {
-    eyebrow: "Masion Web Studio — Nous acceptons de nouveaux projets",
+    eyebrow: "Maison Web Studio — Nous acceptons de nouveaux projets",
     headline: "Des sites web conçus pour faire avancer votre entreprise.",
     lede:
-      "Masion Web Studio crée des sites modernes, pensés pour convertir, pour les entreprises qui veulent paraître aussi professionnelles en ligne que dans la vraie vie.",
-    showcaseLabel: "Sites web d’exemple conçus par Masion Web Studio, affichés sur un ordinateur portable et un téléphone",
+      "Maison Web Studio crée des sites modernes, pensés pour convertir, pour les entreprises qui veulent paraître aussi professionnelles en ligne que dans la vraie vie.",
+    showcaseLabel: "Sites web d’exemple conçus par Maison Web Studio, affichés sur un ordinateur portable et un téléphone",
     trust: [
       { k: "Dès 499 $", v: "Des tarifs clairs et fixes, sans surprise" },
       { k: "7 à 10 jours", v: "Délai habituel pour un site Starter" },
@@ -149,7 +149,7 @@ const fr: Messages = {
     },
     services: { eyebrow: "Services", title: "Tout ce dont votre site a besoin. Rien de superflu.", cta: "Nos services" },
     why: {
-      eyebrow: "Pourquoi Masion",
+      eyebrow: "Pourquoi Maison",
       title: "Des sites professionnels, sans les tracas d’une agence.",
       lede: "Le savoir-faire d’un studio de design, avec la clarté d’un produit que l’on achète en ligne.",
       items: [
@@ -282,7 +282,7 @@ const fr: Messages = {
   },
 
   demo: {
-    notice: "Site d’exemple par Masion Web Studio",
+    notice: "Site d’exemple par Maison Web Studio",
     caseStudy: "Étude de cas",
     startYours: "Lancer le vôtre",
     toolbar: "Commandes du site d’exemple",
@@ -380,7 +380,7 @@ const fr: Messages = {
     eyebrow: "À propos",
     title: "Un studio créatif qui pense comme une entreprise technologique.",
     intro:
-      "Masion Web Studio est né d’une idée simple : un excellent design ne devrait pas exiger un abonnement d’agence, et acheter un site web ne devrait pas être un pari.",
+      "Maison Web Studio est né d’une idée simple : un excellent design ne devrait pas exiger un abonnement d’agence, et acheter un site web ne devrait pas être un pari.",
     p1:
       "Nous allions le savoir-faire d’un studio de design éditorial à la clarté d’un produit moderne. Formules fixes, tarifs transparents et processus défini : vous savez ce que vous obtenez, quand, et à quel prix, avant de commencer.",
     p2:

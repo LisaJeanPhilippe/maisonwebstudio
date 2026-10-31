@@ -24,7 +24,7 @@ for (const locale of LOCALES) {
 test("Arabic layout mirrors: logo on the right, menu on the left", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/ar");
-  const logo = await page.getByRole("link", { name: /Masion Web Studio/ }).first().boundingBox();
+  const logo = await page.getByRole("link", { name: /Maison Web Studio/ }).first().boundingBox();
   const menu = await page.getByRole("button", { name: "افتح القائمة" }).boundingBox();
   expect(logo!.x).toBeGreaterThan(menu!.x);
 });

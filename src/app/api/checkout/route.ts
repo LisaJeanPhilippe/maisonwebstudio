@@ -78,7 +78,7 @@ export async function POST(request: Request) {
           metadata: { orderId: id },
         },
         custom_text: {
-          submit: { message: "All payments are final and non-refundable, as agreed in the Masion Web Studio payment agreement." },
+          submit: { message: "All payments are final and non-refundable, as agreed in the Maison Web Studio payment agreement." },
         },
         line_items: items.map((item) => ({
           quantity: item.quantity,

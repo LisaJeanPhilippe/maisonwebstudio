@@ -18,7 +18,7 @@ export function Logo({ className = "" }: { className?: string }) {
     <LocaleLink href="/" className={`group inline-flex min-h-11 items-center gap-2.5 ${className}`} aria-label={m.nav.home}>
       <LogoMark className="h-7 w-7 text-ink transition-transform duration-500 ease-out-soft group-hover:rotate-[-6deg]" />
       <span className="text-[15px] font-semibold tracking-[-0.02em]" dir="ltr">
-        Masion <span className="font-normal text-muted">Web Studio</span>
+        Maison <span className="font-normal text-muted">Web Studio</span>
       </span>
     </LocaleLink>
   );

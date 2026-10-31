@@ -9,7 +9,7 @@ export function getStripe(): Stripe | null {
   if (!key) return null;
   // The fetch-based client works both on Node and on Cloudflare Workers.
   client ??= new Stripe(key, {
-    appInfo: { name: "Masion Web Studio" },
+    appInfo: { name: "Maison Web Studio" },
     httpClient: Stripe.createFetchHttpClient(),
   });
   return client;

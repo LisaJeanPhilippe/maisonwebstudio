@@ -1,6 +1,6 @@
-# Masion Web Studio
+# Maison Web Studio
 
-Marketing site and online ordering flow for Masion Web Studio: portfolio, services, fixed-price packages, a 6-step configurator with mandatory content upload, and full payment through Stripe Checkout. Built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4 and Motion, and deployed to Cloudflare Workers through OpenNext.
+Marketing site and online ordering flow for Maison Web Studio: portfolio, services, fixed-price packages, a 6-step configurator with mandatory content upload, and full payment through Stripe Checkout. Built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4 and Motion, and deployed to Cloudflare Workers through OpenNext.
 
 The site is available in 10 languages (English, 简体中文, Español, हिन्दी, العربية with right-to-left layout, Français, বাংলা, Português, Русский, Bahasa Indonesia). Legal and contractual documents are English-only until professionally translated (see `docs/TRANSLATION_REVIEW.md`).
 

@@ -4,14 +4,14 @@ import type { Messages } from "./en";
 // Chinese (Simplified) — machine-assisted draft. Requires native-speaker review (docs/TRANSLATION_REVIEW.md).
 const zh: Messages = {
   meta: {
-    siteName: "Masion Web Studio",
+    siteName: "Maison Web Studio",
     home: {
-      title: "Masion Web Studio — 为成长型企业定制网站",
+      title: "Maison Web Studio — 为成长型企业定制网站",
       description: "为小型企业打造现代、注重转化的网站。固定价格 $499 起，流程清晰，最快 7–10 天上线。",
     },
     work: {
       title: "精选作品 — 示例网站",
-      description: "浏览 Masion Web Studio 为美容、餐饮、身心健康、室内设计和专业服务企业设计的示例网站。",
+      description: "浏览 Maison Web Studio 为美容、餐饮、身心健康、室内设计和专业服务企业设计的示例网站。",
     },
     services: {
       title: "服务 — 网站设计、电商与网站改版",
@@ -23,11 +23,11 @@ const zh: Messages = {
     },
     process: {
       title: "流程 — 从下单到上线只需五步",
-      description: "Masion Web Studio 如何将您的网站从下单推进到上线：配置、启动会议、设计、开发与完善、上线。",
+      description: "Maison Web Studio 如何将您的网站从下单推进到上线：配置、启动会议、设计、开发与完善、上线。",
     },
     about: {
       title: "关于工作室",
-      description: "Masion Web Studio 将编辑设计工作室的匠心与现代产品的清晰结合：固定套餐、透明价格、明确流程。",
+      description: "Maison Web Studio 将编辑设计工作室的匠心与现代产品的清晰结合：固定套餐、透明价格、明确流程。",
     },
     start: {
       title: "开始您的网站 — 配置并下单",
@@ -37,8 +37,8 @@ const zh: Messages = {
     demo: { title: "{name} — 在线演示" },
     success: { title: "订单确认" },
     notFound: { title: "页面未找到" },
-    privacy: { title: "隐私政策", description: "Masion Web Studio 如何收集、使用和保护您的个人信息。" },
-    terms: { title: "条款与条件", description: "使用本网站以及向 Masion Web Studio 购买网站项目时适用的条款。" },
+    privacy: { title: "隐私政策", description: "Maison Web Studio 如何收集、使用和保护您的个人信息。" },
+    terms: { title: "条款与条件", description: "使用本网站以及向 Maison Web Studio 购买网站项目时适用的条款。" },
     cookies: { title: "Cookie 政策", description: "本网站使用的 Cookie 和浏览器存储及其用途。" },
     payment: { title: "付款与退款政策", description: "结账时全额付款，以及我们的付款不可退还政策。" },
     accessibility: { title: "无障碍声明", description: "我们对网站无障碍的承诺、已知限制以及如何报告障碍。" },
@@ -71,7 +71,7 @@ const zh: Messages = {
     about: "关于",
     openMenu: "打开菜单",
     closeMenu: "关闭菜单",
-    home: "Masion Web Studio — 首页",
+    home: "Maison Web Studio — 首页",
   },
 
   language: { label: "语言", button: "语言：{name}", listLabel: "选择语言" },
@@ -101,15 +101,15 @@ const zh: Messages = {
     },
     hours: "周一至周五 9:00–18:00（美国东部时间）",
     location: "远程 · 全球服务",
-    rights: "© {year} Masion Web Studio。保留所有权利。",
+    rights: "© {year} Maison Web Studio。保留所有权利。",
     slogan: "专业网站，省去代理公司的烦恼。",
   },
 
   hero: {
-    eyebrow: "Masion Web Studio — 现正接受新项目",
+    eyebrow: "Maison Web Studio — 现正接受新项目",
     headline: "为推动业务前进而设计的网站。",
-    lede: "Masion Web Studio 为希望在线上与线下同样专业的企业，打造现代、注重转化的网站。",
-    showcaseLabel: "Masion Web Studio 设计的示例网站，展示在笔记本电脑和手机上",
+    lede: "Maison Web Studio 为希望在线上与线下同样专业的企业，打造现代、注重转化的网站。",
+    showcaseLabel: "Maison Web Studio 设计的示例网站，展示在笔记本电脑和手机上",
     trust: [
       { k: "$499 起", v: "价格清晰固定，绝无意外" },
       { k: "7–10 天", v: "Starter 网站的常规上线时间" },
@@ -129,7 +129,7 @@ const zh: Messages = {
     },
     services: { eyebrow: "服务", title: "网站所需的一切，绝无多余。", cta: "我们的服务" },
     why: {
-      eyebrow: "为什么选择 Masion",
+      eyebrow: "为什么选择 Maison",
       title: "专业网站，省去代理公司的烦恼。",
       lede: "设计工作室的匠心，加上在线购买产品般的清晰。",
       items: [
@@ -252,7 +252,7 @@ const zh: Messages = {
   },
 
   demo: {
-    notice: "Masion Web Studio 制作的示例网站",
+    notice: "Maison Web Studio 制作的示例网站",
     caseStudy: "案例",
     startYours: "开始您的网站",
     toolbar: "示例网站控制栏",
@@ -322,7 +322,7 @@ const zh: Messages = {
   about: {
     eyebrow: "关于",
     title: "一家像科技公司一样思考的创意工作室。",
-    intro: "Masion Web Studio 源于一个简单的想法：优秀的设计不应需要支付代理公司的月费，购买网站也不应像赌博。",
+    intro: "Maison Web Studio 源于一个简单的想法：优秀的设计不应需要支付代理公司的月费，购买网站也不应像赌博。",
     p1: "我们将编辑设计工作室的匠心与现代产品的清晰结合。固定套餐、透明价格和明确流程，让您在开始前就知道会得到什么、何时得到以及花费多少。",
     p2: "我们与重视自身形象的创始人、餐厅、工作室、事务所和品牌合作。我们的工作是让您的企业在线上与线下一样出色，并让合适的客户更容易说「好」。",
     valuesEyebrow: "我们的价值观",

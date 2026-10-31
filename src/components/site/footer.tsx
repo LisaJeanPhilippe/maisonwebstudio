@@ -94,7 +94,7 @@ export function Footer({ locale, m }: { locale: Locale; m: Messages }) {
           {/* Decorative watermark drawn as SVG, so it isn't treated as low-contrast text. */}
           <svg viewBox="0 0 600 132" className="w-[min(100%,60rem)] select-none fill-ink/[0.06]" focusable="false">
             <text x="0" y="122" fontSize="170" fontWeight="500" textLength="600" lengthAdjust="spacingAndGlyphs" direction="ltr">
-              Masion
+              Maison
             </text>
           </svg>
           <LogoMark className="mb-2 hidden h-10 w-10 shrink-0 text-ink md:block" />

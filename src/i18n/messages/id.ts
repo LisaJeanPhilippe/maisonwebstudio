@@ -4,16 +4,16 @@ import type { Messages } from "./en";
 // Indonesian — machine-assisted draft. Requires native-speaker review (docs/TRANSLATION_REVIEW.md).
 const id: Messages = {
   meta: {
-    siteName: "Masion Web Studio",
+    siteName: "Maison Web Studio",
     home: {
-      title: "Masion Web Studio — Situs web khusus untuk bisnis yang sedang berkembang",
+      title: "Maison Web Studio — Situs web khusus untuk bisnis yang sedang berkembang",
       description:
         "Situs web modern yang berfokus pada konversi untuk usaha kecil. Harga tetap mulai $499, proses yang jelas, dan peluncuran hanya dalam 7–10 hari.",
     },
     work: {
       title: "Karya pilihan — Contoh situs web",
       description:
-        "Lihat contoh situs web yang dirancang Masion Web Studio untuk bisnis kecantikan, restoran, kebugaran, desain interior, dan jasa profesional.",
+        "Lihat contoh situs web yang dirancang Maison Web Studio untuk bisnis kecantikan, restoran, kebugaran, desain interior, dan jasa profesional.",
     },
     services: {
       title: "Layanan — Desain situs web, e-commerce, dan desain ulang",
@@ -28,12 +28,12 @@ const id: Messages = {
     process: {
       title: "Proses — Dari pesanan hingga peluncuran dalam lima langkah",
       description:
-        "Cara Masion Web Studio membawa situs Anda dari pesanan hingga peluncuran: konfigurasi, panggilan awal, desain, pembangunan dan penyempurnaan, lalu peluncuran.",
+        "Cara Maison Web Studio membawa situs Anda dari pesanan hingga peluncuran: konfigurasi, panggilan awal, desain, pembangunan dan penyempurnaan, lalu peluncuran.",
     },
     about: {
       title: "Tentang studio",
       description:
-        "Masion Web Studio memadukan keahlian studio desain editorial dengan kejelasan produk modern: paket tetap, harga transparan, dan proses yang terdefinisi.",
+        "Maison Web Studio memadukan keahlian studio desain editorial dengan kejelasan produk modern: paket tetap, harga transparan, dan proses yang terdefinisi.",
     },
     start: {
       title: "Mulai situs web Anda — Atur dan pesan",
@@ -44,8 +44,8 @@ const id: Messages = {
     demo: { title: "{name} — Demo langsung" },
     success: { title: "Konfirmasi pesanan" },
     notFound: { title: "Halaman tidak ditemukan" },
-    privacy: { title: "Kebijakan Privasi", description: "Cara Masion Web Studio mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda." },
-    terms: { title: "Syarat & Ketentuan", description: "Ketentuan yang berlaku saat Anda menggunakan situs ini dan membeli proyek situs web dari Masion Web Studio." },
+    privacy: { title: "Kebijakan Privasi", description: "Cara Maison Web Studio mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda." },
+    terms: { title: "Syarat & Ketentuan", description: "Ketentuan yang berlaku saat Anda menggunakan situs ini dan membeli proyek situs web dari Maison Web Studio." },
     cookies: { title: "Kebijakan Cookie", description: "Cookie dan penyimpanan browser yang digunakan situs ini, beserta alasannya." },
     payment: { title: "Kebijakan Pembayaran & Pengembalian Dana", description: "Pembayaran penuh saat checkout dan kebijakan pembayaran final kami." },
     accessibility: { title: "Pernyataan Aksesibilitas", description: "Komitmen kami terhadap situs yang aksesibel, keterbatasan yang diketahui, dan cara melaporkan hambatan." },
@@ -78,7 +78,7 @@ const id: Messages = {
     about: "Tentang",
     openMenu: "Buka menu",
     closeMenu: "Tutup menu",
-    home: "Masion Web Studio — beranda",
+    home: "Maison Web Studio — beranda",
   },
 
   language: { label: "Bahasa", button: "Bahasa: {name}", listLabel: "Pilih bahasa" },
@@ -108,16 +108,16 @@ const id: Messages = {
     },
     hours: "Sen–Jum, 09.00–18.00 (waktu Timur AS)",
     location: "Jarak jauh · Seluruh dunia",
-    rights: "© {year} Masion Web Studio. Hak cipta dilindungi undang-undang.",
+    rights: "© {year} Maison Web Studio. Hak cipta dilindungi undang-undang.",
     slogan: "Situs web profesional tanpa repotnya agensi.",
   },
 
   hero: {
-    eyebrow: "Masion Web Studio — Kini menerima proyek baru",
+    eyebrow: "Maison Web Studio — Kini menerima proyek baru",
     headline: "Situs web yang dirancang untuk memajukan bisnis Anda.",
     lede:
-      "Masion Web Studio membuat situs web modern yang berfokus pada konversi untuk bisnis yang ingin tampil seprofesional di dunia online seperti di dunia nyata.",
-    showcaseLabel: "Contoh situs web rancangan Masion Web Studio, ditampilkan di laptop dan ponsel",
+      "Maison Web Studio membuat situs web modern yang berfokus pada konversi untuk bisnis yang ingin tampil seprofesional di dunia online seperti di dunia nyata.",
+    showcaseLabel: "Contoh situs web rancangan Maison Web Studio, ditampilkan di laptop dan ponsel",
     trust: [
       { k: "Mulai $499", v: "Harga jelas dan tetap — tanpa kejutan" },
       { k: "7–10 hari", v: "Waktu peluncuran umum untuk situs Starter" },
@@ -149,7 +149,7 @@ const id: Messages = {
     },
     services: { eyebrow: "Layanan", title: "Semua yang dibutuhkan situs Anda. Tidak lebih.", cta: "Layanan kami" },
     why: {
-      eyebrow: "Mengapa Masion",
+      eyebrow: "Mengapa Maison",
       title: "Situs web profesional tanpa repotnya agensi.",
       lede: "Keahlian studio desain dengan kejelasan produk yang bisa Anda beli secara online.",
       items: [
@@ -282,7 +282,7 @@ const id: Messages = {
   },
 
   demo: {
-    notice: "Situs contoh oleh Masion Web Studio",
+    notice: "Situs contoh oleh Maison Web Studio",
     caseStudy: "Studi kasus",
     startYours: "Mulai milik Anda",
     toolbar: "Kontrol situs contoh",
@@ -380,7 +380,7 @@ const id: Messages = {
     eyebrow: "Tentang",
     title: "Studio kreatif yang berpikir seperti perusahaan teknologi.",
     intro:
-      "Masion Web Studio didirikan berdasarkan gagasan sederhana: desain yang hebat tidak seharusnya membutuhkan biaya langganan agensi, dan membeli situs web tidak seharusnya terasa seperti berjudi.",
+      "Maison Web Studio didirikan berdasarkan gagasan sederhana: desain yang hebat tidak seharusnya membutuhkan biaya langganan agensi, dan membeli situs web tidak seharusnya terasa seperti berjudi.",
     p1:
       "Kami memadukan keahlian studio desain editorial dengan kejelasan produk modern. Paket tetap, harga transparan, dan proses yang terdefinisi membuat Anda tahu apa yang Anda dapatkan, kapan, dan berapa biayanya — sebelum mulai.",
     p2:

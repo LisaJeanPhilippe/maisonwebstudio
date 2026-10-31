@@ -36,7 +36,7 @@ p{position:absolute;left:72px;bottom:64px;font-size:24px;color:#4a4a48;letter-sp
 .phone{position:absolute;left:330px;top:210px;width:118px;height:236px;border-radius:24px;background:#111;padding:5px}
 .phone div{width:100%;height:100%;border-radius:20px;background:#eef0ea;padding:30px 10px}.phone s{display:block;height:10px;border-radius:5px;background:#6e7b63;margin:8px 0;text-decoration:none}
 </style></head><body>
-<div class="brand">${markSvg(48)}<div>Masion <span>Web Studio</span></div></div>
+<div class="brand">${markSvg(48)}<div>Maison <span>Web Studio</span></div></div>
 <h1>Beautiful websites built for businesses ready to grow.</h1>
 <p>Custom websites from $499 · Fixed pricing</p>
 <div class="stage"><div class="browser"><div class="bar"><i></i><i></i><i></i></div><div class="hero"><div><b>Skin, <em>softly</em> restored.</b><div class="pill"></div></div><div class="photo"></div></div></div>

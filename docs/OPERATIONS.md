@@ -43,7 +43,7 @@ R2 is durable but is **not** a backup against accidental deletion, a bug, or a c
 
 1. **Recommended:** a scheduled copy of the bucket to separate storage you control, e.g. with `rclone` (S3-compatible R2 API token with **read-only** access to the bucket):
    ```bash
-   rclone sync r2:masion-web-studio-data /secure/backups/masion/$(date +%F) --s3-no-check-bucket
+   rclone sync r2:masion-web-studio-data /secure/backups/maison/$(date +%F) --s3-no-check-bucket
    ```
    Run daily; keep 30 daily + 12 monthly copies; encrypt the destination (`rclone crypt`) because it contains personal data.
 2. Enable R2 **object lifecycle/versioning** features if available on your plan, or bucket-level Event Notifications to a log.

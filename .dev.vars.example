@@ -4,5 +4,5 @@ NEXT_PUBLIC_SITE_URL=http://localhost:8787
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 RESEND_API_KEY=
-EMAIL_FROM="Masion Web Studio <hello@masionwebstudio.com>"
+EMAIL_FROM="Maison Web Studio <hello@maisonwebstudio.com>"
 STUDIO_NOTIFICATION_EMAIL=

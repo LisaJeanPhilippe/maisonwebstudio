@@ -27,7 +27,7 @@ export function pageMetadata({
   noindex?: boolean;
 }): Metadata {
   const url = localizePath(locale, path);
-  const image = { url: "/og.png", width: 1200, height: 630, alt: "Masion Web Studio — Beautiful websites built for businesses ready to grow." };
+  const image = { url: "/og.png", width: 1200, height: 630, alt: "Maison Web Studio — Beautiful websites built for businesses ready to grow." };
   return {
     metadataBase: new URL(siteOrigin()),
     title: absoluteTitle ? { absolute: title } : title,
@@ -36,7 +36,7 @@ export function pageMetadata({
     robots: noindex ? { index: false, follow: true } : undefined,
     openGraph: {
       type: "website",
-      siteName: "Masion Web Studio",
+      siteName: "Maison Web Studio",
       title,
       description,
       url,

@@ -3,11 +3,11 @@
  * Update these before launch — anything marked TODO is a placeholder.
  */
 export const SITE = {
-  name: "Masion Web Studio",
+  name: "Maison Web Studio",
   /** TODO: replace with your registered legal business name. */
-  legalName: "Masion Web Studio",
+  legalName: "Maison Web Studio",
   /** TODO: replace with your real contact address. */
-  email: "hello@masionwebstudio.com",
+  email: "hello@maisonwebstudio.com",
   /** Optional mailing address shown in the privacy policy, e.g. "123 Main St, City, State, Country". */
   postalAddress: null as string | null,
   /** Optional governing-law jurisdiction for the terms, e.g. "the State of New York, USA". */

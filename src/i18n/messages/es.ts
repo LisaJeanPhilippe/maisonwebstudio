@@ -4,16 +4,16 @@ import type { Messages } from "./en";
 // Spanish — machine-assisted draft. Requires native-speaker review (docs/TRANSLATION_REVIEW.md).
 const es: Messages = {
   meta: {
-    siteName: "Masion Web Studio",
+    siteName: "Maison Web Studio",
     home: {
-      title: "Masion Web Studio — Sitios web a medida para negocios en crecimiento",
+      title: "Maison Web Studio — Sitios web a medida para negocios en crecimiento",
       description:
         "Sitios web modernos y orientados a la conversión para pequeñas empresas. Precios fijos desde $499, un proceso claro y lanzamiento en tan solo 7–10 días.",
     },
     work: {
       title: "Trabajo seleccionado — Sitios web de muestra",
       description:
-        "Explora sitios web de muestra diseñados por Masion Web Studio para negocios de belleza, restaurantes, bienestar, diseño de interiores y servicios profesionales.",
+        "Explora sitios web de muestra diseñados por Maison Web Studio para negocios de belleza, restaurantes, bienestar, diseño de interiores y servicios profesionales.",
     },
     services: {
       title: "Servicios — Diseño web, comercio electrónico y rediseños",
@@ -28,12 +28,12 @@ const es: Messages = {
     process: {
       title: "Proceso — Del pedido al lanzamiento en cinco pasos",
       description:
-        "Cómo Masion Web Studio lleva tu sitio web del pedido al lanzamiento: configuración, llamada inicial, diseño, desarrollo y ajustes, y lanzamiento.",
+        "Cómo Maison Web Studio lleva tu sitio web del pedido al lanzamiento: configuración, llamada inicial, diseño, desarrollo y ajustes, y lanzamiento.",
     },
     about: {
       title: "Sobre el estudio",
       description:
-        "Masion Web Studio une el oficio de un estudio de diseño editorial con la claridad de un producto moderno: paquetes fijos, precios transparentes y un proceso definido.",
+        "Maison Web Studio une el oficio de un estudio de diseño editorial con la claridad de un producto moderno: paquetes fijos, precios transparentes y un proceso definido.",
     },
     start: {
       title: "Empieza tu sitio web — Configura y haz tu pedido",
@@ -44,8 +44,8 @@ const es: Messages = {
     demo: { title: "{name} — Demostración en vivo" },
     success: { title: "Confirmación del pedido" },
     notFound: { title: "Página no encontrada" },
-    privacy: { title: "Política de privacidad", description: "Cómo Masion Web Studio recopila, usa y protege tu información personal." },
-    terms: { title: "Términos y condiciones", description: "Los términos que se aplican al usar este sitio y al comprar un proyecto web a Masion Web Studio." },
+    privacy: { title: "Política de privacidad", description: "Cómo Maison Web Studio recopila, usa y protege tu información personal." },
+    terms: { title: "Términos y condiciones", description: "Los términos que se aplican al usar este sitio y al comprar un proyecto web a Maison Web Studio." },
     cookies: { title: "Política de cookies", description: "Las cookies y el almacenamiento del navegador que usa este sitio, y por qué." },
     payment: { title: "Política de pagos y reembolsos", description: "Pago completo al finalizar la compra y nuestra política de pagos definitivos." },
     accessibility: { title: "Declaración de accesibilidad", description: "Nuestro compromiso con un sitio accesible, limitaciones conocidas y cómo informar de una barrera." },
@@ -78,7 +78,7 @@ const es: Messages = {
     about: "Nosotros",
     openMenu: "Abrir menú",
     closeMenu: "Cerrar menú",
-    home: "Masion Web Studio — inicio",
+    home: "Maison Web Studio — inicio",
   },
 
   language: { label: "Idioma", button: "Idioma: {name}", listLabel: "Elige un idioma" },
@@ -108,16 +108,16 @@ const es: Messages = {
     },
     hours: "Lun–vie, 9:00–18:00 (hora del Este de EE. UU.)",
     location: "Remoto · Todo el mundo",
-    rights: "© {year} Masion Web Studio. Todos los derechos reservados.",
+    rights: "© {year} Maison Web Studio. Todos los derechos reservados.",
     slogan: "Sitios web profesionales sin los dolores de cabeza de una agencia.",
   },
 
   hero: {
-    eyebrow: "Masion Web Studio — Aceptando nuevos proyectos",
+    eyebrow: "Maison Web Studio — Aceptando nuevos proyectos",
     headline: "Sitios web diseñados para impulsar tu negocio.",
     lede:
-      "Masion Web Studio crea sitios web modernos y orientados a la conversión para negocios que quieren verse tan profesionales en línea como en la vida real.",
-    showcaseLabel: "Sitios web de muestra diseñados por Masion Web Studio, en un portátil y un teléfono",
+      "Maison Web Studio crea sitios web modernos y orientados a la conversión para negocios que quieren verse tan profesionales en línea como en la vida real.",
+    showcaseLabel: "Sitios web de muestra diseñados por Maison Web Studio, en un portátil y un teléfono",
     trust: [
       { k: "Desde $499", v: "Precios claros y fijos, sin sorpresas" },
       { k: "7–10 días", v: "Lanzamiento típico de un sitio Starter" },
@@ -149,7 +149,7 @@ const es: Messages = {
     },
     services: { eyebrow: "Servicios", title: "Todo lo que tu sitio necesita. Nada que no.", cta: "Nuestros servicios" },
     why: {
-      eyebrow: "Por qué Masion",
+      eyebrow: "Por qué Maison",
       title: "Sitios web profesionales sin los dolores de cabeza de una agencia.",
       lede: "El oficio de un estudio de diseño con la claridad de un producto que puedes comprar en línea.",
       items: [
@@ -282,7 +282,7 @@ const es: Messages = {
   },
 
   demo: {
-    notice: "Sitio de muestra de Masion Web Studio",
+    notice: "Sitio de muestra de Maison Web Studio",
     caseStudy: "Caso de estudio",
     startYours: "Empieza el tuyo",
     toolbar: "Controles del sitio de muestra",
@@ -380,7 +380,7 @@ const es: Messages = {
     eyebrow: "Nosotros",
     title: "Un estudio creativo que piensa como una empresa tecnológica.",
     intro:
-      "Masion Web Studio nació de una idea sencilla: un gran diseño no debería requerir una cuota mensual de agencia, y comprar un sitio web no debería ser una apuesta.",
+      "Maison Web Studio nació de una idea sencilla: un gran diseño no debería requerir una cuota mensual de agencia, y comprar un sitio web no debería ser una apuesta.",
     p1:
       "Combinamos el oficio de un estudio de diseño editorial con la claridad de un producto moderno. Paquetes fijos, precios transparentes y un proceso definido significan que sabes qué recibes, cuándo lo recibes y cuánto cuesta, antes de empezar.",
     p2:
