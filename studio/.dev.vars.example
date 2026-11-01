@@ -1,0 +1,21 @@
+# Copy to studio/.dev.vars for `npm run studio:dev`. Never commit .dev.vars.
+ENVIRONMENT=development
+# Skip Cloudflare Access locally (ignored in production)
+DEV_ADMIN_EMAIL=you@example.org
+# Use the offline AI stub instead of the Claude API (ignored in production)
+DEV_AI_PROVIDER=stub
+APP_SECRET=replace-with-32+-random-characters-for-local-dev
+INTERNAL_SECRET=replace-with-32+-random-characters-for-local-dev
+TEST_RECIPIENTS=you@yourdomain.com
+SENDER_EMAIL=you@yourdomain.com
+BUSINESS_POSTAL_ADDRESS="PO Box 000, City, ST 00000"
+PUBLIC_BASE_URL=http://localhost:8787
+# Optional for real AI locally: ANTHROPIC_API_KEY=...
+# Fulfillment (local)
+WEBSITE_INTERNAL_URL=http://localhost:3000
+PREVIEW_ORIGIN=http://127.0.0.1:8787
+# base64 of 32 random bytes: openssl rand -base64 32
+ENCRYPTION_KEY=
+# Optional locally: RESEND_API_KEY=... EMAIL_FROM="Maison Web Studio <studio@yourdomain>"
+# Optional: point deployments at a local Cloudflare API mock (ignored in production)
+# DEV_CLOUDFLARE_API=http://127.0.0.1:8792/client/v4

@@ -20,3 +20,6 @@ export const MIME_TYPES: Record<(typeof ACCEPTED_EXTENSIONS)[number], string> = 
   fig: "application/octet-stream", sketch: "application/octet-stream", zip: "application/zip",
   mp4: "video/mp4", mov: "video/quicktime",
 };
+
+/** Inspiration uploads are design references only: images and PDFs. */
+export const INSPIRATION_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "gif", "pdf"] as const;

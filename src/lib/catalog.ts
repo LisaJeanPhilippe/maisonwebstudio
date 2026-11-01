@@ -160,3 +160,14 @@ export function computeTotals(packageId: PackageId, addOns: SelectedAddOns) {
 
 /** Bump when the payment agreement text changes; stored with every order. */
 export const PAYMENT_AGREEMENT_VERSION = "2026-10-27";
+
+/** Main call to action the customer wants on their website (questionnaire). */
+export const CTA_IDS = ["book", "quote", "order", "shop", "consult", "contact", "call", "visit"] as const;
+export type CtaId = (typeof CTA_IDS)[number];
+
+/** Functionality the customer may need (questionnaire). */
+export const FEATURE_IDS = [
+  "contactForm", "booking", "payments", "deposits", "ecommerce", "catalog",
+  "menu", "ordering", "newsletter", "maps", "social", "accounts",
+] as const;
+export type FeatureId = (typeof FEATURE_IDS)[number];

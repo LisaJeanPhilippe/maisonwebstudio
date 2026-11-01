@@ -5,6 +5,7 @@ import { fieldErrors, orderSchema } from "@/lib/order-schema";
 import { LOCALE_META, isLocale, localizePath } from "@/i18n/config";
 import { clientIp, isSameOrigin, jsonError, rateLimit, readLimitedText } from "@/lib/server/request-guards";
 import { getStripe, siteUrl } from "@/lib/server/stripe";
+import { notifyStudio } from "@/lib/server/studio";
 import { newOrderId, saveOrder, uploadExists, updateOrder } from "@/lib/server/storage";
 
 const MAX_BODY_BYTES = 64 * 1024;
@@ -61,6 +62,9 @@ export async function POST(request: Request) {
     total,
     paymentAgreement: { version: PAYMENT_AGREEMENT_VERSION, acceptedAt: now },
   });
+
+  // Lets the studio dashboard show the request as "awaiting payment" (best effort).
+  await notifyStudio({ type: "order.created", orderId: id });
 
   const origin = siteUrl(request.url);
 

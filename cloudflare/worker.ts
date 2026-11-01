@@ -18,8 +18,8 @@ const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
 /** Sends only the opaque lead token and the path — no IP address, user agent or cookies. */
 function reportVisit(url: URL, env: Env, ctx: Ctx) {
-  const endpoint = typeof env.OUTREACH_URL === "string" ? env.OUTREACH_URL : "";
-  const secret = typeof env.OUTREACH_INTERNAL_SECRET === "string" ? env.OUTREACH_INTERNAL_SECRET : "";
+  const endpoint = typeof env.STUDIO_URL === "string" ? env.STUDIO_URL : "";
+  const secret = typeof env.STUDIO_INTERNAL_SECRET === "string" ? env.STUDIO_INTERNAL_SECRET : "";
   const token = (url.searchParams.get("utm_content") ?? "").split("-s")[0];
   if (!endpoint || !secret || !/^[a-z0-9]{6,32}$/.test(token)) return;
   ctx.waitUntil(

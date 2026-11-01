@@ -28,7 +28,7 @@ export default defineConfig({
   projects: [
     { name: "unit", testDir: "tests/unit" },
     // Outreach system: pure logic + workflow tests on an in-memory database. No network, no real email.
-    { name: "outreach", testDir: "outreach/tests", testIgnore: "e2e/**" },
+    { name: "studio", testDir: "studio/tests", testIgnore: "e2e/**" },
     { name: "integration", testDir: "tests/integration", use: { baseURL: API_URL } },
     {
       name: "e2e",

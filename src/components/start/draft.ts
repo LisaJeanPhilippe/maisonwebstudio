@@ -1,8 +1,10 @@
 import type { z } from "zod";
-import { getPackage, type PackageId, type SelectedAddOns } from "@/lib/catalog";
+import { getPackage, type CtaId, type FeatureId, type PackageId, type SelectedAddOns } from "@/lib/catalog";
+import type { Locale } from "@/i18n/config";
 import {
   addOnsStepSchema,
   assetsStepSchema,
+  briefStepSchema,
   configureStepSchema,
   fieldErrors,
   packageStepSchema,
@@ -29,6 +31,27 @@ export type Draft = {
   inspiration: string;
   hasDomain: "yes" | "no" | "unsure";
   launchDate: string;
+  businessDescription: string;
+  location: string;
+  social: string;
+  primaryCta: CtaId | "";
+  desiredActions: string;
+  personality: string;
+  colorsAvoid: string;
+  fonts: string;
+  dislikes: string;
+  designNotes: string;
+  features: FeatureId[];
+  featuresOther: string;
+  toolLinks: string;
+  aboutText: string;
+  servicesText: string;
+  productsText: string;
+  pricingText: string;
+  testimonialsText: string;
+  faqText: string;
+  contactInfo: string;
+  languages: Locale[];
   files: UploadedFile[];
   assetNotes: string;
   acceptTerms: boolean;
@@ -54,6 +77,27 @@ export const EMPTY_DRAFT: Draft = {
   inspiration: "",
   hasDomain: "unsure",
   launchDate: "",
+  businessDescription: "",
+  location: "",
+  social: "",
+  primaryCta: "",
+  desiredActions: "",
+  personality: "",
+  colorsAvoid: "",
+  fonts: "",
+  dislikes: "",
+  designNotes: "",
+  features: [],
+  featuresOther: "",
+  toolLinks: "",
+  aboutText: "",
+  servicesText: "",
+  productsText: "",
+  pricingText: "",
+  testimonialsText: "",
+  faqText: "",
+  contactInfo: "",
+  languages: ["en"],
   files: [],
   assetNotes: "",
   acceptTerms: false,
@@ -64,7 +108,7 @@ export const EMPTY_DRAFT: Draft = {
 /** Fields that must never be restored from storage. */
 export const NON_PERSISTED: (keyof Draft)[] = ["acceptTerms", "acceptPaymentAgreement", "website2"];
 
-export const STEP_IDS = ["package", "configure", "addons", "details", "assets", "review"] as const;
+export const STEP_IDS = ["package", "configure", "addons", "details", "brief", "assets", "review"] as const;
 export type StepId = (typeof STEP_IDS)[number];
 
 export type PageKey =
@@ -101,6 +145,7 @@ const STEP_SCHEMAS: Record<StepId, z.ZodType> = {
   configure: configureStepSchema,
   addons: addOnsStepSchema,
   details: projectStepSchema,
+  brief: briefStepSchema,
   assets: assetsStepSchema,
   review: reviewStepSchema,
 };

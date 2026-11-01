@@ -54,7 +54,8 @@ next-env.d.ts
 /test-results
 /playwright-report
 /.test-data
-/outreach/.wrangler-e2e
-/outreach/test-results
-/outreach/.dev.vars
-/outreach/screenshots
+/studio/.wrangler-e2e
+/studio/test-results
+/studio/.e2e-website-data
+/studio/.dev.vars
+/studio/screenshots

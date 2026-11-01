@@ -35,6 +35,17 @@ for (const width of [1440, 390]) {
     await page.getByLabel(/What should your new website achieve/).fill("Sell our candles online and look more established.");
     await cont(page);
 
+    // Website questionnaire: business, goals, design, features, content, languages.
+    await expect(page.getByRole("heading", { name: "Tell us about your website." })).toBeVisible();
+    await cont(page);
+    await expect(page.locator("#error-summary")).toBeVisible();
+    await page.getByLabel(/Describe your business/).fill("Small-batch soy candles and botanical home fragrance, hand-poured in Portland.");
+    await page.getByLabel("City and state").fill("Portland, OR");
+    await page.getByLabel("The main thing visitors should do").selectOption("shop");
+    await page.getByRole("checkbox", { name: "Español" }).check({ force: true });
+    await expect(page.getByRole("checkbox", { name: "Español" })).toBeChecked();
+    await cont(page);
+
     // Uploading content is mandatory.
     await expect(page.getByRole("heading", { name: "Share your brand assets." })).toBeVisible();
     await cont(page);

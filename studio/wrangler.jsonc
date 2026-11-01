@@ -1,0 +1,81 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  // Maison Web Studio — fulfillment (AI website builder + deployments) and outreach (separate from the public website).
+  "name": "maison-studio",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+
+  // Create once: npx wrangler d1 create maison-studio   → paste the id below.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "maison-studio", "database_id": "REPLACE_WITH_D1_DATABASE_ID", "migrations_dir": "migrations" }
+  ],
+
+  // Create once: npx wrangler r2 bucket create maison-studio-sites  (private: never make it public)
+  "r2_buckets": [{ "binding": "SITES", "bucket_name": "maison-studio-sites" }],
+
+  // Create once: npx wrangler queues create maison-studio-jobs  (and maison-studio-dlq)
+  "queues": {
+    "producers": [{ "binding": "JOBS", "queue": "maison-studio-jobs" }],
+    "consumers": [
+      {
+        "queue": "maison-studio-jobs",
+        "max_batch_size": 1,
+        "max_concurrency": 1,
+        "max_retries": 3,
+        "dead_letter_queue": "maison-studio-dlq"
+      }
+    ]
+  },
+
+  "ratelimits": [
+    { "name": "ADMIN_LIMITER", "namespace_id": "2001", "simple": { "limit": 120, "period": 60 } },
+    { "name": "PUBLIC_LIMITER", "namespace_id": "2002", "simple": { "limit": 20, "period": 60 } }
+  ],
+
+  "triggers": {
+    "crons": [
+      // Every 5 minutes: send eligible emails (one at a time, within limits), process inbox, schedule follow-ups.
+      "*/5 * * * *",
+      // Weekdays 13:07 UTC (≈ 9:07 am US Eastern): discover and research new leads.
+      "7 13 * * 1-5",
+      // Hourly at :17: reconcile website orders with projects (missed-event safety net).
+      "17 * * * *"
+    ]
+  },
+
+  "vars": {
+    "ENVIRONMENT": "production",
+    "BUSINESS_NAME": "Maison Web Studio",
+    "WEBSITE_URL": "https://maisonwebstudio.com",
+    "SENDER_NAME": "Lisa",
+    "SENDER_EMAIL": "",
+    "BUSINESS_POSTAL_ADDRESS": "",
+    // Public URL of this worker (used for unsubscribe links), e.g. https://go.getmaisonwebstudio.com
+    "PUBLIC_BASE_URL": "",
+    // Cloudflare Access (Zero Trust) settings protecting /admin
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": "",
+    // Comma-separated emails allowed into the dashboard (checked in addition to Access)
+    "ADMIN_EMAILS": "",
+    // Comma-separated addresses that may receive email while TEST MODE is on (your own inboxes)
+    "TEST_RECIPIENTS": "",
+    "SENDER_TIMEZONE": "America/New_York",
+    "AI_MODEL": "claude-opus-5-5",
+    // Website origin whose private /api/internal endpoints this worker reads (e.g. https://maisonwebstudio.com)
+    "WEBSITE_INTERNAL_URL": "",
+    // Origin that serves previews. Use a separate hostname (e.g. https://preview.maisonwebstudio.com routed to this worker).
+    // Empty = PUBLIC_BASE_URL.
+    "PREVIEW_ORIGIN": "",
+    // Transactional sender for customer updates, e.g. "Maison Web Studio <studio@maisonwebstudio.com>" (Resend-verified domain)
+    "EMAIL_FROM": ""
+  }
+  // Secrets (npx wrangler secret put NAME -c studio/wrangler.jsonc):
+  //   ANTHROPIC_API_KEY, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN,
+  //   APP_SECRET (signs unsubscribe links and admin form tokens), INTERNAL_SECRET (website → outreach events),
+  //   PAGESPEED_API_KEY (optional),
+  //   ENCRYPTION_KEY (base64 of 32 random bytes; encrypts Cloudflare tokens and customer Resend keys at rest),
+  //   RESEND_API_KEY (transactional customer emails)
+}

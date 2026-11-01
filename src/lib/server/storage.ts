@@ -1,5 +1,5 @@
 import "server-only";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { LineItem } from "@/lib/catalog";
@@ -45,14 +45,18 @@ type Blob = { key: string; body: string | ArrayBuffer; contentType: string; down
 
 interface DataStore {
   get(key: string): Promise<string | null>;
+  getBytes(key: string): Promise<ArrayBuffer | null>;
   put(blob: Blob): Promise<void>;
   exists(key: string): Promise<boolean>;
+  /** Keys under a prefix (at most `limit`). */
+  list(prefix: string, limit: number): Promise<string[]>;
 }
 
 /** Minimal shape of the R2 binding we use, so this file doesn't need Workers types. */
 type R2Like = {
-  get(key: string): Promise<{ text(): Promise<string> } | null>;
+  get(key: string): Promise<{ text(): Promise<string>; arrayBuffer(): Promise<ArrayBuffer> } | null>;
   head(key: string): Promise<unknown | null>;
+  list(options: { prefix: string; cursor?: string; limit?: number }): Promise<{ objects: { key: string }[]; truncated: boolean; cursor?: string }>;
   put(
     key: string,
     value: string | ArrayBuffer,
@@ -65,6 +69,20 @@ function r2Store(bucket: R2Like): DataStore {
     async get(key) {
       const obj = await bucket.get(key);
       return obj ? obj.text() : null;
+    },
+    async getBytes(key) {
+      const obj = await bucket.get(key);
+      return obj ? obj.arrayBuffer() : null;
+    },
+    async list(prefix, limit) {
+      const keys: string[] = [];
+      let cursor: string | undefined;
+      do {
+        const page = await bucket.list({ prefix, cursor, limit: Math.min(1000, limit) });
+        keys.push(...page.objects.map((o) => o.key));
+        cursor = page.truncated ? page.cursor : undefined;
+      } while (cursor && keys.length < limit);
+      return keys.slice(0, limit);
     },
     async put({ key, body, contentType, download }) {
       // Customer files are always served as downloads, never rendered inline.
@@ -94,6 +112,23 @@ function diskStore(): DataStore {
         return await readFile(file(key), "utf8");
       } catch {
         return null;
+      }
+    },
+    async getBytes(key) {
+      try {
+        const b = await readFile(file(key));
+        return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer;
+      } catch {
+        return null;
+      }
+    },
+    async list(prefix, limit) {
+      const dir = path.dirname(file(`${prefix}x`));
+      try {
+        const names = await readdir(dir);
+        return names.filter((n) => !n.endsWith(".tmp")).map((n) => `${prefix}${n}`).slice(0, limit);
+      } catch {
+        return [];
       }
     },
     async put({ key, body }) {
@@ -211,4 +246,28 @@ export async function markEventProcessed(eventId: string): Promise<boolean> {
 export async function uploadExists(id: string): Promise<boolean> {
   if (!ID_PATTERN.test(id)) return false;
   return store().exists(`uploads/${id}/meta.json`);
+}
+
+export type UploadMeta = { id: string; name: string; originalName: string; size: number; type: string; uploadedAt: string };
+
+/** Reads an uploaded file and its metadata (for the studio's private file endpoint). */
+export async function getUpload(id: string): Promise<{ meta: UploadMeta; body: ArrayBuffer } | null> {
+  if (!ID_PATTERN.test(id)) return null;
+  const s = store();
+  const raw = await s.get(`uploads/${id}/meta.json`);
+  if (!raw) return null;
+  const meta = JSON.parse(raw) as UploadMeta;
+  const body = await s.getBytes(`uploads/${id}/${meta.name}`);
+  return body ? { meta, body } : null;
+}
+
+/** Most recent order ids (ids start with the date, so lexical order ≈ time order). */
+export async function listRecentOrderIds(limit = 200): Promise<string[]> {
+  const keys = await store().list("orders/", 5000);
+  return keys
+    .map((k) => k.replace(/^orders\//, "").replace(/\.json$/, ""))
+    .filter((id) => ID_PATTERN.test(id))
+    .sort()
+    .reverse()
+    .slice(0, limit);
 }

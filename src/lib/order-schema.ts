@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { ADD_ON_IDS, INDUSTRY_IDS, STYLE_IDS } from "./catalog";
+import { ADD_ON_IDS, CTA_IDS, FEATURE_IDS, INDUSTRY_IDS, STYLE_IDS } from "./catalog";
+import { LOCALES } from "@/i18n/config";
 
 /**
  * Validation is shared by the browser (for fast feedback) and the server
@@ -20,6 +21,9 @@ export const ERROR_CODES = [
   "goalsTooShort",
   "tooLong",
   "filesRequired",
+  "locationRequired",
+  "descriptionTooShort",
+  "ctaRequired",
   "agreementRequired",
   "termsRequired",
   "invalid",
@@ -65,15 +69,49 @@ export const projectStepSchema = z.object({
   launchDate: optionalText(40),
 });
 
+/** The detailed brief: business, goals, design, functionality, content and languages. */
+export const briefStepSchema = z.object({
+  businessDescription: text(2000).min(20, { message: "descriptionTooShort" }),
+  location: text(160).min(2, { message: "locationRequired" }),
+  social: optionalText(500),
+  primaryCta: z.enum(CTA_IDS, { message: "ctaRequired" }),
+  desiredActions: optionalText(500),
+  personality: optionalText(300),
+  colorsAvoid: optionalText(200),
+  fonts: optionalText(200),
+  dislikes: optionalText(1000),
+  designNotes: optionalText(2000),
+  features: z.array(z.enum(FEATURE_IDS), { message: "invalid" }).max(FEATURE_IDS.length).optional().default([]),
+  featuresOther: optionalText(500),
+  toolLinks: optionalText(1000),
+  aboutText: optionalText(4000),
+  servicesText: optionalText(4000),
+  productsText: optionalText(4000),
+  pricingText: optionalText(3000),
+  testimonialsText: optionalText(3000),
+  faqText: optionalText(3000),
+  contactInfo: optionalText(1000),
+  languages: z.array(z.enum(LOCALES), { message: "invalid" }).min(1, { message: "invalid" }).max(LOCALES.length).optional().default(["en"]),
+});
+
+export const MAX_CONTENT_FILES = 15;
+export const MAX_INSPIRATION_FILES = 10;
+
 export const uploadedFileSchema = z.object({
   id: z.string().regex(/^[a-f0-9-]{36}$/i, { message: "invalid" }),
   name: text(200),
   size: z.number().int().nonnegative(),
   type: text(120),
+  /** "content" = logo, photos, text the site uses; "inspiration" = design references only. */
+  kind: z.enum(["content", "inspiration"]).optional().default("content"),
 });
 
 export const assetsStepSchema = z.object({
-  files: z.array(uploadedFileSchema).min(1, { message: "filesRequired" }).max(15, { message: "tooLong" }),
+  files: z
+    .array(uploadedFileSchema)
+    .max(MAX_CONTENT_FILES + MAX_INSPIRATION_FILES, { message: "tooLong" })
+    .refine((files) => files.some((f) => (f.kind ?? "content") === "content"), { message: "filesRequired" })
+    .refine((files) => files.filter((f) => f.kind === "inspiration").length <= MAX_INSPIRATION_FILES, { message: "tooLong" }),
   assetNotes: optionalText(1000),
 });
 
@@ -87,6 +125,7 @@ export const orderSchema = z.object({
   ...configureStepSchema.shape,
   ...addOnsStepSchema.shape,
   ...projectStepSchema.shape,
+  ...briefStepSchema.shape,
   ...assetsStepSchema.shape,
   ...reviewStepSchema.shape,
   /** UI language the order was placed in (informational only). */

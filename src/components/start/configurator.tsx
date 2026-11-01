@@ -9,6 +9,7 @@ import { fmt, formatPrice, plur } from "@/i18n/format";
 import type { ClientMessages } from "@/i18n/messages";
 import { SITE } from "@/lib/site";
 import { AssetsStep } from "./assets-step";
+import { BriefStep } from "./brief-step";
 import {
   DEFAULT_PAGES,
   EMPTY_DRAFT,
@@ -330,6 +331,7 @@ export default function Configurator() {
               {step === "configure" && <ConfigureStep draft={draft} update={update} errors={shownErrors} />}
               {step === "addons" && <AddOnsStep draft={draft} update={update} errors={shownErrors} />}
               {step === "details" && <DetailsStep draft={draft} update={update} errors={shownErrors} />}
+              {step === "brief" && <BriefStep draft={draft} update={update} errors={shownErrors} />}
               {step === "assets" && (
                 <AssetsStep draft={draft} update={update} errors={shownErrors} onBusyChange={setUploading} />
               )}

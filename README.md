@@ -1,6 +1,6 @@
 # Maison Web Studio
 
-Marketing site and online ordering flow for Maison Web Studio: portfolio, services, fixed-price packages, a 6-step configurator with mandatory content upload, and full payment through Stripe Checkout. Built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4 and Motion, and deployed to Cloudflare Workers through OpenNext.
+Marketing site and online ordering flow for Maison Web Studio: portfolio, services, fixed-price packages, a 7-step configurator with a website questionnaire and mandatory content upload, and full payment through Stripe Checkout. Built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4 and Motion, and deployed to Cloudflare Workers through OpenNext.
 
 The site is available in 10 languages (English, 简体中文, Español, हिन्दी, العربية with right-to-left layout, Français, বাংলা, Português, Русский, Bahasa Indonesia). Legal and contractual documents are English-only until professionally translated (see `docs/TRANSLATION_REVIEW.md`).
 
@@ -49,11 +49,13 @@ To run the browser tests against another server (e.g. `npm run preview` or stagi
 
 ## Ordering flow
 
-Package → Configure → Add-ons → Project details → Upload content (at least one file required) → Review & pay. The customer must accept the payment agreement (all payments final and non-refundable) and the Terms. Payment is always in full via Stripe Checkout. The success page only *reads* order status; the Stripe webhook is what marks an order paid, after checking the amount and currency. Progress is kept in `sessionStorage` for the current tab only.
+Package → Configure → Add-ons → Project details → Website questionnaire (business, goals and main call to action, design, features, content, languages) → Upload content (at least one file) and optional inspiration images → Review & pay. The customer must accept the payment agreement (all payments final and non-refundable) and the Terms. Payment is always in full via Stripe Checkout. The success page only *reads* order status; the Stripe webhook is what marks an order paid, after checking the amount and currency. Progress is kept in `sessionStorage` for the current tab only.
 
-## Outreach app
+## Maison Studio (private admin app)
 
-`outreach/` is a separate Cloudflare Worker: AI lead discovery, research, personalized email drafts, review-before-send, compliant sending, follow-ups and reply tracking. See [outreach/README.md](outreach/README.md).
+`studio/` is a separate Cloudflare Worker with a private dashboard (Cloudflare Access):
+- **Website fulfillment:** paid orders become projects; an AI agent builds a real website from the questionnaire; you review sandboxed previews, request revisions, approve, optionally send to the client, and deploy to the customer's own Cloudflare account. See [studio/FULFILLMENT.md](studio/FULFILLMENT.md).
+- **Outreach:** AI lead discovery, personalized email drafts, review-before-send, compliant sending and reply tracking. See [studio/README.md](studio/README.md).
 
 ## Documentation
 

@@ -16,15 +16,16 @@
     "test:integration": "playwright test --project=integration",
     "test:e2e": "playwright test --project=e2e",
     "check": "npm run typecheck && npm run lint && npm run build && npm test",
-    "outreach:typecheck": "tsc -p outreach/tsconfig.json",
-    "outreach:test": "playwright test --project=outreach",
-    "outreach:e2e": "cd outreach && playwright test -c playwright.e2e.config.ts",
-    "outreach:dev": "wrangler dev -c outreach/wrangler.jsonc",
-    "outreach:deploy": "wrangler deploy -c outreach/wrangler.jsonc",
-    "outreach:migrate": "wrangler d1 migrations apply maison-outreach --remote -c outreach/wrangler.jsonc"
+    "studio:typecheck": "tsc -p studio/tsconfig.json",
+    "studio:test": "playwright test --project=studio",
+    "studio:e2e": "cd studio && playwright test -c playwright.e2e.config.ts",
+    "studio:dev": "wrangler dev -c studio/wrangler.jsonc",
+    "studio:deploy": "wrangler deploy -c studio/wrangler.jsonc",
+    "studio:migrate": "wrangler d1 migrations apply maison-studio --remote -c studio/wrangler.jsonc"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",
+    "@noble/hashes": "2.4.0",
     "@opennextjs/cloudflare": "1.20.12",
     "hono": "4.13.13",
     "motion": "^14.6.0",

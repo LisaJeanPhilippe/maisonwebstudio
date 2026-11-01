@@ -15,7 +15,7 @@ The site runs on Cloudflare Workers via the OpenNext adapter. Orders and uploads
    - `STRIPE_WEBHOOK_SECRET` — from step 6
    - `RESEND_API_KEY` (recommended — without it customers get **no** confirmation email), `EMAIL_FROM`, `STUDIO_NOTIFICATION_EMAIL`
    - Build variable: `NEXT_PUBLIC_SITE_URL=https://yourdomain.com`
-   - Optional, for the outreach app (`outreach/README.md`): `OUTREACH_URL` and the secret `OUTREACH_INTERNAL_SECRET`
+   - For Maison Studio (website fulfillment + outreach, see `studio/FULFILLMENT.md`): `STUDIO_URL` and the secret `STUDIO_INTERNAL_SECRET`. Both are required for fulfillment: the website uses them to notify the studio of orders and to authorize the studio's private reads of orders and uploaded files.
 5. **Domain:** add the domain to Cloudflare. Worker → Settings → Domains & Routes → add custom domain. Then in the zone:
    - SSL/TLS → mode **Full (strict)**; Edge Certificates → **Always Use HTTPS** on, minimum TLS 1.2.
    - The app also redirects HTTP→HTTPS and sends HSTS (`max-age=31536000`). Only add `includeSubDomains`/`preload` once every subdomain is HTTPS-only.

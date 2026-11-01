@@ -1,7 +1,7 @@
 import "server-only";
 import type Stripe from "stripe";
 import { sendOrderConfirmation } from "./email";
-import { reportOutreachConversion } from "./outreach";
+import { notifyStudio, reportOutreachConversion } from "./studio";
 import { getOrder, updateOrder, type OrderStatus, type StoredOrder } from "./storage";
 
 /** States an order can no longer leave through ordinary checkout events. */
@@ -50,6 +50,8 @@ export async function handlePaidSession(session: Stripe.Checkout.Session): Promi
     updated = (await updateOrder(order.id, { confirmationSentAt: new Date().toISOString() })) ?? updated;
     await reportOutreachConversion(updated.order.ref);
   }
+  // The studio builds the website only after this verified payment (it re-fetches the order itself).
+  if (updated.status === "paid") await notifyStudio({ type: "order.paid", orderId: updated.id });
   return updated;
 }
 
@@ -58,11 +60,15 @@ export async function setUnpaidStatus(session: Stripe.Checkout.Session, status: 
   const id = orderIdFrom(session);
   const order = id ? await getOrder(id) : null;
   if (!order || SETTLED.includes(order.status)) return order;
-  return updateOrder(order.id, { status });
+  const updated = await updateOrder(order.id, { status });
+  await notifyStudio({ type: "order.updated", orderId: order.id });
+  return updated;
 }
 
 export async function handleRefund(orderId: string, fullyRefunded: boolean) {
   const order = await getOrder(orderId);
   if (!order) return null;
-  return updateOrder(order.id, { status: fullyRefunded ? "refunded" : "partially_refunded" });
+  const updated = await updateOrder(order.id, { status: fullyRefunded ? "refunded" : "partially_refunded" });
+  await notifyStudio({ type: "order.updated", orderId: order.id });
+  return updated;
 }

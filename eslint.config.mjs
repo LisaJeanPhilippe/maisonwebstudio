@@ -7,7 +7,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // The outreach worker renders plain server-side HTML with Hono JSX (not React/Next.js).
   {
-    files: ["outreach/**/*.{ts,tsx}"],
+    files: ["studio/**/*.{ts,tsx}"],
     rules: {
       "react/jsx-key": "off",
       "react/no-unescaped-entities": "off",
@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
       "@next/next/no-html-link-for-pages": "off",
       "@next/next/no-head-element": "off",
       "@next/next/no-css-tags": "off",
+      "@next/next/no-img-element": "off",
     },
   },
   // Override default ignores of eslint-config-next.
