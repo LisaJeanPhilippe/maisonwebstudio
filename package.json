@@ -21,7 +21,8 @@
     "studio:e2e": "cd studio && playwright test -c playwright.e2e.config.ts",
     "studio:dev": "wrangler dev -c studio/wrangler.jsonc",
     "studio:deploy": "wrangler deploy -c studio/wrangler.jsonc",
-    "studio:migrate": "wrangler d1 migrations apply maison-studio --remote -c studio/wrangler.jsonc"
+    "studio:migrate": "wrangler d1 migrations apply maison-studio --remote -c studio/wrangler.jsonc",
+    "studio:ci-deploy": "wrangler d1 migrations apply maison-studio --remote -c studio/wrangler.jsonc && wrangler deploy -c studio/wrangler.jsonc"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

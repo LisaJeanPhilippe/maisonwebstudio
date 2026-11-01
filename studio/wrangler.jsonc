@@ -10,7 +10,7 @@
 
   // Create once: npx wrangler d1 create maison-studio   → paste the id below.
   "d1_databases": [
-    { "binding": "DB", "database_name": "maison-studio", "database_id": "REPLACE_WITH_D1_DATABASE_ID", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "maison-studio", "database_id": "ca35d520-cf69-4b70-92c7-8a98cf343748", "migrations_dir": "migrations" }
   ],
 
   // Create once: npx wrangler r2 bucket create maison-studio-sites  (private: never make it public)
