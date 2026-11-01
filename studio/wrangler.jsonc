@@ -49,12 +49,12 @@
   "vars": {
     "ENVIRONMENT": "production",
     "BUSINESS_NAME": "Maison Web Studio",
-    "WEBSITE_URL": "https://maisonwebstudio.com",
+    "WEBSITE_URL": "https://maisonwebstudio.322ljeanphilippe.workers.dev",
     "SENDER_NAME": "Lisa",
     "SENDER_EMAIL": "",
     "BUSINESS_POSTAL_ADDRESS": "",
     // Public URL of this worker (used for unsubscribe links), e.g. https://go.getmaisonwebstudio.com
-    "PUBLIC_BASE_URL": "",
+    "PUBLIC_BASE_URL": "https://maison-studio.322ljeanphilippe.workers.dev",
     // Cloudflare Access (Zero Trust) settings protecting /admin
     "ACCESS_TEAM_DOMAIN": "",
     "ACCESS_AUD": "",
@@ -65,7 +65,7 @@
     "SENDER_TIMEZONE": "America/New_York",
     "AI_MODEL": "claude-opus-5-5",
     // Website origin whose private /api/internal endpoints this worker reads (e.g. https://maisonwebstudio.com)
-    "WEBSITE_INTERNAL_URL": "",
+    "WEBSITE_INTERNAL_URL": "https://maisonwebstudio.322ljeanphilippe.workers.dev",
     // Origin that serves previews. Use a separate hostname (e.g. https://preview.maisonwebstudio.com routed to this worker).
     // Empty = PUBLIC_BASE_URL.
     "PREVIEW_ORIGIN": "",
