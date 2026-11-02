@@ -54,6 +54,7 @@ export function makeStudio(env: Env, deps: Deps): StudioCtx {
     // The deploy client may only be redirected to a local mock outside production.
     cloudflareApi: !production && env.DEV_CLOUDFLARE_API ? origin(env.DEV_CLOUDFLARE_API) : CLOUDFLARE_API,
     browser: env.BROWSER ?? null,
+    aiBuilds: env.AI_BUILDS === "on",
   };
 }
 

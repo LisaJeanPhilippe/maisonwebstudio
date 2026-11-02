@@ -4,6 +4,8 @@ This is the private dashboard at `/admin` on the studio Worker (`studio/`). It t
 
 **paid order → structured brief → AI build → automatic checks → sandboxed preview → your review (revisions, versions, rollback) → optional client review → your approval → you deploy to Cloudflare (preferably the customer's own account) → live check → completed**
 
+> **AI builds are off by default (`AI_BUILDS` = `off` in `studio/wrangler.jsonc`).** In this orders-only mode a paid order appears on the dashboard with everything the customer sent — contact preferences, package and add-ons, every questionnaire answer and their files — plus a contact panel (email, call, text, and a copy-ready order summary). Nothing is generated or deployed automatically; you build the site and click **Mark project completed**. Set `AI_BUILDS` to `on` (and add `ANTHROPIC_API_KEY`) to turn on the AI workflow below.
+
 Two things are always true:
 - **AI never approves anything, and nothing deploys without a person.** The status machine (`src/projects/status.ts`) has no path from an AI state to `APPROVED`. Only an admin action can approve a version. Only an admin clicking **Deploy** starts a deployment, and only for an approved version.
 - **Generation starts only after payment.** The studio re-reads every order from the website, and the website marks orders paid only from a Stripe webhook with a valid signature. An event, a browser redirect or a forged request can trigger a re-check, but it can't start a build.
@@ -72,6 +74,7 @@ Prices change, so check each provider's pricing page before relying on these num
 | `EMAIL_FROM` | var | Sender for customer emails, e.g. `Maison Web Studio <studio@yourdomain>` |
 | `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`, `ADMIN_EMAILS` | var | Dashboard login (Cloudflare Access) and the admin allow-list |
 | `AI_MODEL` | var | Default `claude-opus-5-5` |
+| `AI_BUILDS` | var | `off` (default): orders only. `on`: paid orders start an AI build |
 | `ANTHROPIC_API_KEY` | secret | Website agent |
 | `APP_SECRET` | secret | Signs preview links, review links and form tokens (32+ random characters) |
 | `INTERNAL_SECRET` | secret | Shared with the website for server-to-server calls (32+ characters) |

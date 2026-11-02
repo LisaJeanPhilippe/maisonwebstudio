@@ -67,7 +67,8 @@ export type ProjectEvent = (typeof EVENTS)[number];
 const NEXT: Record<ProjectStatus, ProjectStatus[]> = {
   NEW_REQUEST: ["AWAITING_PAYMENT", "PAID"],
   AWAITING_PAYMENT: ["PAID", "AWAITING_PAYMENT"],
-  PAID: ["QUEUED_FOR_AI"],
+  // PAID → COMPLETED: orders-only mode, where the studio builds the site outside this system.
+  PAID: ["QUEUED_FOR_AI", "COMPLETED"],
   QUEUED_FOR_AI: ["AI_BUILDING", "FAILED"],
   AI_BUILDING: ["READY_FOR_REVIEW", "FAILED"],
   READY_FOR_REVIEW: ["APPROVED", "REVISIONS_REQUESTED", "QUEUED_FOR_AI"],

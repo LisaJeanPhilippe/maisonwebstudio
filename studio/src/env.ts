@@ -48,6 +48,8 @@ export type Env = {
   /** Transactional customer email (Resend). */
   RESEND_API_KEY?: string;
   EMAIL_FROM?: string;
+  /** "on" lets paid orders start an AI website build automatically. Anything else (default): orders only. */
+  AI_BUILDS?: string;
   /** Development only: point the deploy client at a local mock of the Cloudflare API. */
   DEV_CLOUDFLARE_API?: string;
 };

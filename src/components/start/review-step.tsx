@@ -43,7 +43,7 @@ export function ReviewStep({
       title: c.sections.project,
       step: "details",
       rows: [
-        [c.rows.contact, [draft.fullName, draft.email, draft.phone].filter(Boolean).join(" · ")],
+        [c.rows.contact, [draft.fullName, draft.email, draft.phone, m.configurator.details.contactMethods[draft.contactMethod], draft.contactTime].filter(Boolean).join(" · ")],
         [c.rows.business, `${draft.businessName} — ${industry}`],
         [c.rows.goals, draft.goals],
         ...(draft.currentWebsite ? ([[c.rows.currentWebsite, draft.currentWebsite]] as [string, string][]) : []),

@@ -17,6 +17,8 @@ export type StudioCtx = Deps & {
   adminOrigin: string;
   /** Cloudflare API base (overridable only in development, for local testing). */
   cloudflareApi: string;
+  /** When false, paid orders are only collected for the studio; no AI build starts. */
+  aiBuilds: boolean;
   /** Optional Cloudflare Browser Rendering for axe + responsive checks. */
   browser?: Fetcher | null;
 };

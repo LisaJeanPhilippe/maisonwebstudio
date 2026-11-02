@@ -32,6 +32,7 @@ const vars = {
   WEBSITE_INTERNAL_URL: `http://127.0.0.1:${WEBSITE_PORT}`,
   ENCRYPTION_KEY: "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyA=",
   DEV_CLOUDFLARE_API: "http://127.0.0.1:8792/client/v4",
+  AI_BUILDS: "on",
 };
 const varFlags = Object.entries(vars).map(([k, v]) => `--var ${k}:${v}`).join(" ");
 

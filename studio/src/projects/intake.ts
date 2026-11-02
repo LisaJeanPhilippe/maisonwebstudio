@@ -2,7 +2,7 @@ import { CTA_IDS, getPackage, INDUSTRIES, ADD_ONS } from "../../../src/lib/catal
 import { nowIso, randomId, type Db } from "../db";
 import type { StudioCtx } from "./context";
 import { notifyCustomer, notifyAdmin } from "./notify";
-import { getProject, getProjectByOrder, patchProject, recordEvent, transition, type ProjectRow } from "./store";
+import { getProject, getProjectByOrder, patchProject, recordEvent, transition, TransitionError, type ProjectRow } from "./store";
 
 /** The website's order record, fetched server-to-server (never from the browser). */
 export type WebsiteOrder = {
@@ -293,13 +293,19 @@ async function prepareAndQueue(deps: StudioCtx, projectId: string) {
   const assets = await listAssets(deps.db, projectId);
   const { brief, missing } = buildBrief(JSON.parse(project.order_snapshot), assets);
   await patchProject(deps.db, projectId, { brief: JSON.stringify(brief), missing_info: JSON.stringify(missing), last_error: copy.failed ? `${copy.failed} file(s) could not be copied` : null });
-  await queueGeneration(deps, projectId, "initial", "system");
   const p = (await getProject(deps.db, projectId))!;
-  await notifyCustomer(deps, p, "project_started");
+  if (!deps.aiBuilds) {
+    // Orders-only mode: everything the customer sent is ready in the dashboard; the studio takes it from here.
+    await notifyAdmin(deps, p, "new_order", `New paid order: ${p.business_name} (${p.package_id})`);
+    return;
+  }
+  await queueGeneration(deps, projectId, "initial", "system");
+  await notifyCustomer(deps, (await getProject(deps.db, projectId))!, "project_started");
 }
 
 /** Queues an AI build. Only paid projects can be built. */
 export async function queueGeneration(deps: StudioCtx, projectId: string, kind: "initial" | "revision", actor: string, opts: { revisionId?: string; baseVersionId?: string } = {}) {
+  if (!deps.aiBuilds) throw new TransitionError("The AI website builder is turned off (AI_BUILDS).");
   const p = (await getProject(deps.db, projectId))!;
   if (p.payment_status !== "paid") throw new Error("AI generation only starts after payment is confirmed.");
   const id = randomId("gen");

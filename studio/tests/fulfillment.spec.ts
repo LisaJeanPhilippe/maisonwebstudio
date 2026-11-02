@@ -7,6 +7,7 @@ import { WebsiteClient, type StudioStorage, type WebsiteOrder } from "../src/pro
 import { syncOrder } from "../src/projects/intake";
 import { getProject, listVersions, transition, TransitionError } from "../src/projects/store";
 import { canTransition } from "../src/projects/status";
+import { orderSections, orderSummaryText } from "../src/projects/order-details";
 import { runGeneration, previewCap } from "../src/builder/pipeline";
 import { StubWebsiteAgent } from "../src/builder/stub-agent";
 import type { WebsiteAgent } from "../src/builder/agent";
@@ -114,6 +115,7 @@ function harness() {
     previewOrigin: "https://preview.test",
     adminOrigin: "https://studio.test",
     cloudflareApi: "https://cf.mock/client/v4",
+    aiBuilds: true,
   };
   const take = (type: Job["type"]) => {
     const i = jobs.findIndex((j) => j.type === type);
@@ -425,3 +427,41 @@ test("plain-http links fail the checks, except the site's own origin on a local 
   expect(insecure(page("http://example.com/x"), "http://example.com")).toBe(true);
   expect(insecure(page("http://127.0.0.1:8792/__served/site/about/"), "http://127.0.0.1:8792/__served/site")).toBe(false);
 });
+
+test("orders-only mode (AI_BUILDS off): paid order is collected for the studio, no AI build, can be completed", async () => {
+  const h = harness();
+  h.ctx.aiBuilds = false;
+  h.site.order = order("paid", { contactMethod: "text", contactTime: "Weekdays after 5 pm" });
+  const p = (await syncOrder(h.ctx, h.site.order.id))!;
+  expect(p.status).toBe("PAID");
+  expect(h.jobs.filter((j) => j.type === "build")).toHaveLength(0);
+  expect((await h.db.prepare("SELECT COUNT(*) AS n FROM ai_generations").first<{ n: number }>())!.n).toBe(0);
+  // Files are still copied so the studio can download them.
+  const files = await h.db.prepare("SELECT status FROM project_assets WHERE project_id = ?").bind(p.id).all<{ status: string }>();
+  expect(files.results.map((f) => f.status)).toEqual(["stored", "stored"]);
+  const alert = await h.db.prepare("SELECT subject FROM notifications WHERE channel = 'dashboard' AND template = 'new_order'").first<{ subject: string }>();
+  expect(alert!.subject).toContain("Bloom & Co Florist");
+  await expect(rebuildGuard(h)).rejects.toThrow(/turned off/);
+  await markCompleted(h.ctx, p.id, "owner@example.org");
+  expect((await getProject(h.db, p.id))!.status).toBe("COMPLETED");
+
+  const sections = orderSections(h.site.order.order);
+  const contact = sections.find((s) => s.title === "Contact")!.rows;
+  expect(contact).toEqual(expect.arrayContaining([["Preferred contact method", "Text message"], ["Best time to reach them", "Weekdays after 5 pm"], ["Email", "dana@inbox-test.dev"]]));
+  expect(sections.find((s) => s.title === "Goals")!.rows).toContainEqual(["Main thing visitors should do", "Request a quote"]);
+  expect(sections.find((s) => s.title === "Order")!.rows).toContainEqual(["Website languages", "English, Spanish"]);
+  const text = orderSummaryText(p, h.site.order.order, [{ name: "storefront.png", kind: "content" }, { name: "moodboard.png", kind: "inspiration" }]);
+  expect(text).toContain("Preferred contact method: Text message");
+  expect(text).toContain("Services:\n  Wedding flowers");
+  expect(text).toContain("- moodboard.png (inspiration)");
+});
+
+async function rebuildGuard(h: ReturnType<typeof harness>) {
+  const { queueGeneration } = await import("../src/projects/intake");
+  const p = (await getProjectByOrderId(h))!;
+  return queueGeneration(h.ctx, p.id, "initial", "owner@example.org");
+}
+async function getProjectByOrderId(h: ReturnType<typeof harness>) {
+  const { getProjectByOrder } = await import("../src/projects/store");
+  return getProjectByOrder(h.db, h.site.order!.id);
+}

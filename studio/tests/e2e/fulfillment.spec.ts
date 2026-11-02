@@ -99,6 +99,14 @@ test("paid order → AI build → preview → revision → approval → client r
   const projectUrl = (await page.getByRole("link", { name: "Bloom & Co Florist" }).getAttribute("href"))!;
   await page.goto(projectUrl);
   await expect(page.getByText("Waiting for the customer's payment.")).toBeVisible();
+  // Contact panel and readable order details are on every order page.
+  await expect(page.getByRole("link", { name: "Email dana@inbox-test.dev" })).toHaveAttribute("href", /^mailto:dana%40inbox-test\.dev\?subject=/);
+  await expect(page.getByRole("link", { name: "Call 512-555-0100" })).toHaveAttribute("href", "tel:5125550100");
+  await expect(page.locator("#order")).toContainText("Request a quote");
+  await expect(page.locator("#order")).toContainText("English, Spanish");
+  const summary = await page.request.get(`${projectUrl}/summary.txt`);
+  expect(summary.headers()["content-disposition"]).toContain("attachment");
+  expect(await summary.text()).toContain("Business name: Bloom & Co Florist");
 
   // A forged event can't mark anything paid (bad secret is rejected; a valid event only triggers a re-check).
   expect((await page.request.post("/internal/event", { headers: { "x-internal-secret": "nope" }, data: { type: "order.paid", orderId } })).status()).toBe(403);

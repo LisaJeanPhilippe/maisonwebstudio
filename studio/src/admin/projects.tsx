@@ -22,6 +22,7 @@ import { rollbackTo } from "../builder/pipeline";
 import { audit, nowIso } from "../db";
 import { Badge, Csrf, Field, fmtDate, Layout, safeHref, Stat } from "./views";
 import type { AppEnv } from "../app";
+import { orderSections, orderSummaryText } from "../projects/order-details";
 
 type C = Context<AppEnv>;
 
@@ -291,7 +292,15 @@ export function registerProjectRoutes(admin: Hono<AppEnv>) {
     );
     const thumb = (a: (typeof assets)[number]) =>
       a.status === "stored" && /^image\/(png|jpeg|webp|gif)$/.test(a.mime) ? <img src={`/admin/projects/${p.id}/assets/${a.id}`} alt={`${a.role}: ${a.name}`} width={96} height={96} style="width:96px;height:96px;object-fit:cover;border-radius:8px;border:1px solid var(--line)" loading="lazy" /> : null;
-    const answers = Object.entries(order.order).filter(([k, v]) => !["files", "acceptTerms", "acceptPaymentAgreement", "website2", "ref"].includes(k) && v !== "" && !(Array.isArray(v) && !v.length));
+    const buildMode = ctx.aiBuilds || versions.length > 0;
+    const sections = orderSections(order.order);
+    const summary = orderSummaryText(p, order.order, assets.map((a) => ({ name: a.name, kind: a.kind })));
+    const method = String(order.order.contactMethod ?? "email");
+    const tel = (p.customer_phone ?? "").replace(/[^\d+]/g, "");
+    const subject = `Your ${p.business_name} website — Maison Web Studio`;
+    const greeting = `Hi ${p.customer_name.split(" ")[0] || p.customer_name},\n\n`;
+    const mailto = (body: string) => `mailto:${encodeURIComponent(p.customer_email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const summaryMail = greeting + "Thank you for your order! Here's a copy of the details you sent us:\n\n" + summary;
 
     return page(
       c,
@@ -304,7 +313,10 @@ export function registerProjectRoutes(admin: Hono<AppEnv>) {
         </p>
         {p.last_error && <p class="banner bad">{p.last_error}</p>}
         <nav aria-label="Project sections" class="small" style="margin:8px 0 16px">
-          {[["next", "Next step"], ["preview", "Preview"], ["revise", "Revisions"], ["versions", "Versions"], ["checks", "Quality checks"], ["deploy", "Deployment"], ["customer", "Customer"], ["brief", "Brief"], ["files", "Files"], ["notes", "Notes"], ["history", "History"]].map(([id, l]) => (
+          {(buildMode
+            ? [["next", "Next step"], ["contact", "Contact"], ["order", "Order details"], ["preview", "Preview"], ["revise", "Revisions"], ["versions", "Versions"], ["checks", "Quality checks"], ["deploy", "Deployment"], ["customer", "Payment"], ["files", "Files"], ["notes", "Notes"], ["history", "History"]]
+            : [["next", "Next step"], ["contact", "Contact"], ["order", "Order details"], ["files", "Files"], ["customer", "Payment"], ["notes", "Notes"], ["history", "History"]]
+          ).map(([id, l]) => (
             <a href={`#${id}`} style="margin-inline-end:12px">
               {l}
             </a>
@@ -314,7 +326,13 @@ export function registerProjectRoutes(admin: Hono<AppEnv>) {
         <section id="next" class="card" aria-labelledby="h-next">
           <h2 id="h-next" style="margin-top:0">Next step</h2>
           {p.status === "AWAITING_PAYMENT" || p.status === "NEW_REQUEST" ? <p>Waiting for the customer's payment. The AI build starts automatically once Stripe confirms it.</p> : null}
-          {AI_ACTIVE.includes(p.status) || p.status === "PAID" ? <p>The AI agent is working ({gens[0]?.stage ?? "queued"}). Refresh to see progress — the new version appears here when it's built and checked.</p> : null}
+          {p.status === "PAID" && !ctx.aiBuilds ? (
+            <div class="row">
+              <p style="margin:0">Paid order received. Everything the customer sent is below — contact them, build the website, then mark the project completed.</p>
+              {act("complete", "Mark project completed")}
+            </div>
+          ) : null}
+          {AI_ACTIVE.includes(p.status) || (p.status === "PAID" && ctx.aiBuilds) ? <p>The AI agent is working ({gens[0]?.stage ?? "queued"}). Refresh to see progress — the new version appears here when it's built and checked.</p> : null}
           {p.status === "READY_FOR_REVIEW" && shown ? (
             <div class="row">
               <p style="margin:0">
@@ -392,6 +410,74 @@ export function registerProjectRoutes(admin: Hono<AppEnv>) {
           )}
         </section>
 
+        <section id="contact" class="card" aria-labelledby="h-contact">
+          <h2 id="h-contact" style="margin-top:0">Contact the client</h2>
+          <p style="margin:0 0 4px">
+            <strong>{p.customer_name}</strong> · prefers{" "}
+            <strong>{({ email: "email", phone: "a phone call", text: "a text message" } as Record<string, string>)[method] ?? method}</strong>
+            {order.order.contactTime ? <> · best time: {String(order.order.contactTime)}</> : null}
+          </p>
+          <p class="row" style="margin:8px 0">
+            <a class="btn" href={mailto(greeting)}>
+              Email {p.customer_email}
+            </a>
+            {tel && (
+              <a class="btn secondary" href={`tel:${tel}`}>
+                Call {p.customer_phone}
+              </a>
+            )}
+            {tel && (
+              <a class="btn secondary" href={`sms:${tel}`}>
+                Text {p.customer_phone}
+              </a>
+            )}
+            {!tel && <span class="small muted">No phone number given.</span>}
+          </p>
+          <details>
+            <summary>Send the client a copy of their order</summary>
+            <p class="small muted">Opens your email app with the summary filled in. You can also copy it from the box or download it.</p>
+            <p class="row">
+              {summaryMail.length < 1800 ? (
+                <a class="btn secondary" href={mailto(summaryMail)}>
+                  Email the summary to the client
+                </a>
+              ) : (
+                <span class="small muted">The summary is long — copy it from the box below into your email.</span>
+              )}
+              <a class="btn secondary" href={`/admin/projects/${p.id}/summary.txt`}>
+                Download summary (.txt)
+              </a>
+            </p>
+            <label for="summary">Order summary</label>
+            <textarea id="summary" readonly style="min-height:220px;font-family:ui-monospace,monospace;font-size:13px">
+              {summary}
+            </textarea>
+          </details>
+        </section>
+
+        <section id="order" aria-labelledby="h-order">
+          <h2 id="h-order">Order details</h2>
+          <div class="two">
+            {sections.map((sec) => (
+              <div class="card">
+                <h3 style="margin-top:0">{sec.title}</h3>
+                <dl class="small" style="margin:0">
+                  {sec.rows.map(([label, value]) => (
+                    <>
+                      <dt>
+                        <strong>{label}</strong>
+                      </dt>
+                      <dd style="margin:0 0 10px;white-space:pre-wrap;overflow-wrap:anywhere">{value}</dd>
+                    </>
+                  ))}
+                </dl>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {buildMode && (
+          <>
         <section id="preview" aria-labelledby="h-preview">
           <h2 id="h-preview">Website preview {shown ? `— version ${shown.number}` : ""}</h2>
           {previewUrl ? (
@@ -643,9 +729,12 @@ export function registerProjectRoutes(admin: Hono<AppEnv>) {
           )}
         </section>
 
+          </>
+        )}
+
         <div class="two">
           <section id="customer" aria-labelledby="h-customer">
-            <h2 id="h-customer">Customer & payment</h2>
+            <h2 id="h-customer">Payment</h2>
             <ul class="plain">
               <li>{p.customer_name}</li>
               <li>{p.customer_email}</li>
@@ -671,26 +760,15 @@ export function registerProjectRoutes(admin: Hono<AppEnv>) {
               ))}
             </ul>
           </section>
-          <section id="brief" aria-labelledby="h-brief">
-            <h2 id="h-brief">Website brief</h2>
-            <details open>
-              <summary>Structured brief (sent to the AI agent)</summary>
-              <pre tabindex={0} class="email" style="max-height:420px;overflow:auto">{JSON.stringify(brief, null, 2)}</pre>
-            </details>
-            <details>
-              <summary>Questionnaire answers</summary>
-              <dl class="small">
-                {answers.map(([k, v]) => (
-                  <>
-                    <dt>
-                      <strong>{k}</strong>
-                    </dt>
-                    <dd style="margin:0 0 8px;white-space:pre-wrap">{Array.isArray(v) ? v.join(", ") : typeof v === "object" ? JSON.stringify(v) : String(v)}</dd>
-                  </>
-                ))}
-              </dl>
-            </details>
-          </section>
+          {buildMode && (
+            <section id="brief" aria-labelledby="h-brief">
+              <h2 id="h-brief">AI brief</h2>
+              <details>
+                <summary>Structured brief (sent to the AI agent)</summary>
+                <pre tabindex={0} class="email" style="max-height:420px;overflow:auto">{JSON.stringify(brief, null, 2)}</pre>
+              </details>
+            </section>
+          )}
         </div>
 
         <section id="files" aria-labelledby="h-files">
@@ -797,6 +875,18 @@ export function registerProjectRoutes(admin: Hono<AppEnv>) {
   );
 
   // Customer files for admins only (images inline for thumbnails; everything else as a download).
+  admin.get("/projects/:id/summary.txt", async (c) => {
+    const p = await getProject(c.var.deps.db, c.req.param("id"));
+    if (!p) return c.notFound();
+    const order = parseJson<{ order: Record<string, unknown> }>(p.order_snapshot, { order: {} });
+    const files = await listAssets(c.var.deps.db, p.id);
+    const name = `${p.business_name.replace(/[^\w-]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "order"}-order.txt`;
+    return c.body(orderSummaryText(p, order.order, files.map((a) => ({ name: a.name, kind: a.kind }))), 200, {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Content-Disposition": `attachment; filename="${name}"`,
+    });
+  });
+
   admin.get("/projects/:id/assets/:assetId", async (c) => {
     const a = await c.var.deps.db.prepare("SELECT * FROM project_assets WHERE id = ? AND project_id = ?").bind(c.req.param("assetId"), c.req.param("id")).first<{ r2_key: string | null; mime: string; name: string }>();
     if (!a?.r2_key) return c.notFound();

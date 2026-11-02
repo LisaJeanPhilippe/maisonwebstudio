@@ -64,6 +64,8 @@
     "TEST_RECIPIENTS": "",
     "SENDER_TIMEZONE": "America/New_York",
     "AI_MODEL": "claude-opus-5-5",
+    // "on" = paid orders start an AI website build automatically. "off" = orders only (you build the site yourself).
+    "AI_BUILDS": "off",
     // Website origin whose private /api/internal endpoints this worker reads (e.g. https://maisonwebstudio.com)
     "WEBSITE_INTERNAL_URL": "https://maisonwebstudio.322ljeanphilippe.workers.dev",
     // Origin that serves previews. Use a separate hostname (e.g. https://preview.maisonwebstudio.com routed to this worker).

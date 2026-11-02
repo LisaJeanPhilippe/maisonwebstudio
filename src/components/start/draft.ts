@@ -23,6 +23,8 @@ export type Draft = {
   fullName: string;
   email: string;
   phone: string;
+  contactMethod: "email" | "phone" | "text";
+  contactTime: string;
   businessName: string;
   industry: string;
   currentWebsite: string;
@@ -69,6 +71,8 @@ export const EMPTY_DRAFT: Draft = {
   fullName: "",
   email: "",
   phone: "",
+  contactMethod: "email",
+  contactTime: "",
   businessName: "",
   industry: "",
   currentWebsite: "",

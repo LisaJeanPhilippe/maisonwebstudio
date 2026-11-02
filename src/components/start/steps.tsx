@@ -388,6 +388,14 @@ export function DetailsStep({ draft, update, errors }: StepProps) {
         <TextField id="fullName" label={c.fullName} autoComplete="name" maxLength={120} value={draft.fullName} onChange={set("fullName")} error={errors.fullName} />
         <TextField id="email" label={c.email} type="email" inputMode="email" autoComplete="email" spellCheck={false} maxLength={200} value={draft.email} onChange={set("email")} error={errors.email} hint={c.emailHint} />
         <TextField id="phone" label={c.phone} type="tel" inputMode="tel" autoComplete="tel" optional maxLength={40} value={draft.phone} onChange={set("phone")} error={errors.phone} />
+        <SelectField id="contactMethod" label={c.contactMethod} hint={c.contactMethodHint} value={draft.contactMethod} onChange={set("contactMethod")} error={errors.contactMethod}>
+          {(["email", "phone", "text"] as const).map((id) => (
+            <option key={id} value={id}>
+              {c.contactMethods[id]}
+            </option>
+          ))}
+        </SelectField>
+        <TextField id="contactTime" label={c.contactTime} optional placeholder={c.contactTimePlaceholder} maxLength={120} value={draft.contactTime} onChange={set("contactTime")} error={errors.contactTime} />
         <TextField id="businessName" label={c.businessName} autoComplete="organization" maxLength={160} value={draft.businessName} onChange={set("businessName")} error={errors.businessName} />
         <SelectField id="industry" label={c.industry} value={draft.industry} onChange={set("industry")} error={errors.industry}>
           <option value="" disabled>

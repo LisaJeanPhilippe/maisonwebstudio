@@ -59,6 +59,8 @@ export const projectStepSchema = z.object({
   fullName: text(120).min(2, { message: "nameRequired" }),
   email: text(200).pipe(z.email({ message: "emailInvalid" })),
   phone: text(40).refine((v) => v === "" || /^[+()\d\s.-]{7,}$/.test(v), { message: "phoneInvalid" }),
+  contactMethod: z.enum(["email", "phone", "text"], { message: "invalid" }).optional().default("email"),
+  contactTime: optionalText(120),
   businessName: text(160).min(2, { message: "businessRequired" }),
   industry: z.enum(INDUSTRY_IDS as [string, ...string[]], { message: "industryRequired" }),
   currentWebsite: optionalUrl,
