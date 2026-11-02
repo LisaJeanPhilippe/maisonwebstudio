@@ -89,7 +89,9 @@ Prices change, so check each provider's pricing page before relying on these num
 
 Do these once, in order. Each credential lists the service, why it's needed, the cost, where to get it, the variable name, how to set it and how to test it.
 
-1. **Merge and deploy the code.** The fulfillment system is on the `outreach-system` branch. After review, merge it to `main`. The website redeploys from GitHub as before.
+1. **Two Cloudflare apps, one repo.** Connect the repo to the website app (deploy command `npx opennextjs-cloudflare deploy`) and, separately, to a Worker named `maisonstudio` (no build command; deploy command `npm run studio:ci-deploy`). Never chain both deploys in one app: Workers Builds forces every deploy in a build onto that app's own name.
+
+   **Merge and deploy the code.** The fulfillment system is on the `outreach-system` branch. After review, merge it to `main`. The website redeploys from GitHub as before.
 
 2. **Create the Cloudflare resources for the studio** (Cloudflare dashboard login: `npx wrangler login`):
    ```bash
@@ -101,7 +103,7 @@ Do these once, in order. Each credential lists the service, why it's needed, the
    ```
    Test: `npx wrangler d1 execute maison-studio --remote -c studio/wrangler.jsonc --command "SELECT COUNT(*) FROM projects"` returns 0.
 
-3. **Fill in the vars in `studio/wrangler.jsonc`:** `PUBLIC_BASE_URL` (e.g. `https://studio.maisonwebstudio.com`), `PREVIEW_ORIGIN` (e.g. `https://preview.maisonwebstudio.com`), `WEBSITE_INTERNAL_URL` (`https://maisonwebstudio.com`), `EMAIL_FROM`, `ADMIN_EMAILS`. Deploy with `npm run studio:deploy`. Then in Workers → maison-studio → Settings → Domains & Routes, add **both** hostnames as custom domains.
+3. **Fill in the vars in `studio/wrangler.jsonc`:** `PUBLIC_BASE_URL` (e.g. `https://studio.maisonwebstudio.com`), `PREVIEW_ORIGIN` (e.g. `https://preview.maisonwebstudio.com`), `WEBSITE_INTERNAL_URL` (`https://maisonwebstudio.com`), `EMAIL_FROM`, `ADMIN_EMAILS`. Deploy with `npm run studio:deploy`. Then in Workers → maisonstudio → Settings → Domains & Routes, add **both** hostnames as custom domains.
 
 4. **`APP_SECRET`**
    - Why: signs preview, review and form links.

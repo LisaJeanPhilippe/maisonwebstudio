@@ -18,7 +18,7 @@ A separate Cloudflare Worker that works like a careful sales assistant for Maiso
 
 ```mermaid
 flowchart LR
-  subgraph Worker["maison-studio (Cloudflare Worker)"]
+  subgraph Worker["maisonstudio (Cloudflare Worker)"]
     CRON["Cron: */5 min and weekdays 13:07 UTC"] --> Q["Queue: one job at a time"]
     Q --> PIPE["discover → audit → score → research → draft"]
     Q --> SEND["send one approved email"]
@@ -166,7 +166,7 @@ Edit the `vars` in `studio/wrangler.jsonc` (sender, postal address, URLs, admin 
 ```bash
 npm run studio:deploy
 ```
-Add a custom domain to the worker (Workers → maison-studio → Settings → Domains & Routes), e.g. `go.getmaisonwebstudio.com`, and set `PUBLIC_BASE_URL` to it.
+Add a custom domain to the worker (Workers → maisonstudio → Settings → Domains & Routes), e.g. `go.getmaisonwebstudio.com`, and set `PUBLIC_BASE_URL` to it.
 
 To deploy from GitHub instead, create a second Worker from the same repository with deploy command `npx wrangler deploy -c studio/wrangler.jsonc`.
 
@@ -229,7 +229,7 @@ In automated mode, only drafts that pass every honesty check for GOOD or HIGH pr
   - visits from outreach and businesses that visited;
   - meetings and customers.
 - **Activity:** background runs (discovery, inbox) with errors, the dry-run outbox and the audit log.
-- **Cloudflare:** Workers → maison-studio → Logs, plus Queues → `maison-studio-dlq` for jobs that failed three times.
+- **Cloudflare:** Workers → maisonstudio → Logs, plus Queues → `maison-studio-dlq` for jobs that failed three times.
 - **Google:** Postmaster Tools for the outreach domain (spam rate should stay below 0.1%; Gmail requires bulk senders to stay under 0.3%).
 
 ## Testing

@@ -26,17 +26,19 @@ const app = createApp();
 const worker: ExportedHandler<Env, Job> = {
   fetch: (req, env, ctx) => app.fetch(req, env, ctx),
 
+  // One cron trigger ("*/5 * * * *") drives everything, so the studio fits the Workers Free plan's
+  // per-account cron limit. The hourly and weekday jobs are picked from the scheduled time (UTC).
   async scheduled(controller, env, ctx) {
     const deps = makeDeps(env);
-    if (controller.cron === "17 * * * *") {
-      // Hourly safety net: re-check recent website orders in case an event was missed.
-      ctx.waitUntil(env.JOBS.send({ type: "reconcile_orders" }));
-      return;
-    }
-    if (controller.cron === "7 13 * * 1-5") {
-      ctx.waitUntil(env.JOBS.send({ type: "discover" }));
-      return;
-    }
+    const t = new Date(controller.scheduledTime);
+    const minute = t.getUTCMinutes();
+    const every5 = controller.cron === "*/5 * * * *";
+    // Hourly safety net at :15: re-check recent website orders in case an event was missed.
+    if (controller.cron === "17 * * * *" || (every5 && minute >= 15 && minute < 20)) ctx.waitUntil(env.JOBS.send({ type: "reconcile_orders" }));
+    // Weekdays ≈ 13:05 UTC (≈ 9 am US Eastern): discover and research new leads.
+    const weekday = t.getUTCDay() >= 1 && t.getUTCDay() <= 5;
+    if (controller.cron === "7 13 * * 1-5" || (every5 && weekday && t.getUTCHours() === 13 && minute >= 5 && minute < 10)) ctx.waitUntil(env.JOBS.send({ type: "discover" }));
+    if (!every5) return;
     ctx.waitUntil(
       tick(deps, makeTransport(env, deps.db)).then(
         (r) => deps.log.info("tick", r),

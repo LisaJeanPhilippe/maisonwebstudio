@@ -1,7 +1,9 @@
 {
   "$schema": "../node_modules/wrangler/config-schema.json",
   // Maison Web Studio — fulfillment (AI website builder + deployments) and outreach (separate from the public website).
-  "name": "maison-studio",
+  "name": "maisonstudio",
+  "workers_dev": true,
+  "preview_urls": false,
   "main": "src/index.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -37,12 +39,10 @@
 
   "triggers": {
     "crons": [
-      // Every 5 minutes: send eligible emails (one at a time, within limits), process inbox, schedule follow-ups.
-      "*/5 * * * *",
-      // Weekdays 13:07 UTC (≈ 9:07 am US Eastern): discover and research new leads.
-      "7 13 * * 1-5",
-      // Hourly at :17: reconcile website orders with projects (missed-event safety net).
-      "17 * * * *"
+      // Every 5 minutes: send eligible emails, process the inbox, and (picked by time inside the Worker)
+      // reconcile website orders hourly and discover leads on weekday mornings. One trigger keeps the
+      // studio within the Workers Free plan's cron limit.
+      "*/5 * * * *"
     ]
   },
 
@@ -54,7 +54,7 @@
     "SENDER_EMAIL": "",
     "BUSINESS_POSTAL_ADDRESS": "",
     // Public URL of this worker (used for unsubscribe links), e.g. https://go.getmaisonwebstudio.com
-    "PUBLIC_BASE_URL": "https://maison-studio.322ljeanphilippe.workers.dev",
+    "PUBLIC_BASE_URL": "https://maisonstudio.322ljeanphilippe.workers.dev",
     // Cloudflare Access (Zero Trust) settings protecting /admin
     "ACCESS_TEAM_DOMAIN": "icy-resonance-b5cd.cloudflareaccess.com",
     "ACCESS_AUD": "f1dc2d3830b56c91f24a5709867712cc9d51a083a2d0eb8528ddf631f9278e88",
