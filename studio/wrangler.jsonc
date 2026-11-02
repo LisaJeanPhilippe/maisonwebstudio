@@ -56,7 +56,7 @@
     // Public URL of this worker (used for unsubscribe links), e.g. https://go.getmaisonwebstudio.com
     "PUBLIC_BASE_URL": "https://maison-studio.322ljeanphilippe.workers.dev",
     // Cloudflare Access (Zero Trust) settings protecting /admin
-    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_TEAM_DOMAIN": "icy-resonance-b5cd.cloudflareaccess.com",
     "ACCESS_AUD": "f1dc2d3830b56c91f24a5709867712cc9d51a083a2d0eb8528ddf631f9278e88",
     // Comma-separated emails allowed into the dashboard (checked in addition to Access)
     "ADMIN_EMAILS": "322ljeanphilippe@gmail.com",
