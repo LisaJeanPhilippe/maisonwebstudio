@@ -23,8 +23,14 @@
     { "name": "CHECKOUT_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
     { "name": "UPLOAD_LIMITER", "namespace_id": "1002", "simple": { "limit": 30, "period": 60 } }
   ],
-  // Daily data-retention job (03:17 UTC).
-  "triggers": { "crons": ["17 3 * * *"] }
+  // Daily data-retention job (03:17 UTC). Deploys set the Worker's crons to exactly this list.
+  "triggers": { "crons": ["17 3 * * *"] },
+  // Keep plain-text variables added in the Cloudflare dashboard (e.g. EMAIL_FROM) across deploys.
+  "keep_vars": true,
+  "vars": {
+    // Maison Studio (private dashboard). Not a secret; STUDIO_INTERNAL_SECRET is set as a secret.
+    "STUDIO_URL": "https://maisonstudio.322ljeanphilippe.workers.dev"
+  }
   // Secrets (set with `npx wrangler secret put NAME` or in the dashboard):
   //   STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY,
   //   EMAIL_FROM, STUDIO_NOTIFICATION_EMAIL
